@@ -30,7 +30,7 @@ def editUser(request,user_id):
     return render(request, 'users/editUser.html',data)
 
 def deleteUser(request,user_id):
-    user_details = collection_name.delete_one({"_id": ObjectId(user_id)})
+    collection_name.delete_one({"_id": ObjectId(user_id)})
     return redirect('index')
 
 def createUser(request):
@@ -43,4 +43,16 @@ def createUser(request):
     "no_hp": request.POST['phone']
     }
     collection_name.insert_one(data)
+    return redirect('index')
+
+def updateUser(request, user_id):
+    data = {
+    "nama_Lengkap" : request.POST['name'],
+    "jenis_kelamin" : request.POST['kelamin'],
+    "tempat_lahir" : request.POST['tempat-lahir'],
+    "tanggal_lahir" : request.POST['tanggal-lahir'],
+    "alamat": request.POST['alamat'],
+    "no_hp": request.POST['phone']
+    }
+    collection_name.replace_one({"_id": ObjectId(user_id)},data)
     return redirect('index')
