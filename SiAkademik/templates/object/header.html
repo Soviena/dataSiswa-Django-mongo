@@ -19,7 +19,7 @@
       <div class="position-sticky">
         <div class="list-group list-group-flush mx-3 mt-4">
           <a
-            href="{% url 'index' %}"
+            href="{% url 'userManagementIndex' %}"
             class="list-group-item list-group-item-action py-2 ripple active"
             aria-current="true"
           >
@@ -78,8 +78,8 @@
         </button>
   
         <!-- Brand -->
-        <a class="navbar-brand" href="{% url 'index' %}">
-            LOGO
+        <a class="navbar-brand" href="{% url 'home' %}">
+            SIAKADEMIK
         </a>
         <!-- Search form -->
         <form class="d-none d-md-flex input-group w-auto my-auto">
@@ -95,6 +95,7 @@
   
         <!-- Right links -->
         <ul class="navbar-nav ms-auto d-flex flex-row">
+          <a href="{% url 'home' %}" class="nav-link me-3 me-lg-0">Home</a>
           <!-- Notification dropdown -->
           <!-- <li class="nav-item dropdown">
             <a
@@ -193,7 +194,7 @@
               role="button"
               data-mdb-toggle="dropdown"
               aria-expanded="false"
-            >
+            > {{ request.session.username }}
               <img
                 src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img (31).webp"
                 class="rounded-circle"
@@ -213,7 +214,7 @@
                 <a class="dropdown-item" href="#">Settings</a>
               </li>
               <li>
-                <a class="dropdown-item" href="#">Logout</a>
+                <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
               </li>
             </ul>
           </li>

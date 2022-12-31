@@ -31,7 +31,7 @@ def editUser(request,user_id):
 
 def deleteUser(request,user_id):
     collection_name.delete_one({"_id": ObjectId(user_id)})
-    return redirect('index')
+    return redirect('userManagementIndex')
 
 def createUser(request):
     data = {
@@ -43,7 +43,7 @@ def createUser(request):
     "no_hp": request.POST['phone']
     }
     collection_name.insert_one(data)
-    return redirect('index')
+    return redirect('userManagementIndex')
 
 def updateUser(request, user_id):
     data = {
@@ -55,4 +55,4 @@ def updateUser(request, user_id):
     "no_hp": request.POST['phone']
     }
     collection_name.replace_one({"_id": ObjectId(user_id)},data)
-    return redirect('index')
+    return redirect('userManagementIndex')
