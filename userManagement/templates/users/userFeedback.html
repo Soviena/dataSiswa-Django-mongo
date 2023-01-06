@@ -1,0 +1,32 @@
+{% load static %}
+{% load filters_ %}
+{% include 'object/header.html' %}
+  <!--Main layout-->
+  <main style="margin-top: 10vh;" class="mx-3">
+    <h2 class="my-5">User Feedback</h2>
+    <div class="container-fluid shadow">     
+      <table class="table table-responsive table-striped">
+        <thead>
+            <tr>
+              <th>Username</th>
+              <th>Feedback</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for user in data %}
+            <tr>
+              <td>{{ user.userDetail.0.username }}</td>
+              <td>{{ user.feedback }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+            <td></td>
+            <td></td>
+        </tfoot>
+      </table>
+
+    </div>
+  </main>
+  <!--Main layout-->
+{% include 'object/footer.html' %}

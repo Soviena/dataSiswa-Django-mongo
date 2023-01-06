@@ -8,6 +8,24 @@
       <form action="{% url 'newUser' %}" method="POST" >
         {% csrf_token %}
         <div class="mb-2">
+          <label for="username" class="col-2 col-form-label fw-bold">Username</label>
+          <input type="text" class="col-10 form-control" name="username">
+        </div>
+        <div class="mb-2">
+          <label for="password" class="col-2 col-form-label fw-bold">Password</label>
+          <input type="password" class="col-10 form-control" name="password">
+        </div>
+        <div class="mb-2">
+          <label for="name" class="col-2 col-form-label fw-bold">Role</label>
+          <select name="role" class="col-10 form-control" id="role">
+            <option disabled selected value="SISWA">Select Role</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="GURU">GURU</option>
+            <option value="STAFF">STAFF</option>
+            <option value="SISWA">SISWA</option>
+          </select>
+        </div>
+        <div class="mb-2">
           <label for="name" class="col-2 col-form-label fw-bold">Nama Lengkap</label>
           <input type="text" class="col-10 form-control" name="name">
         </div>
@@ -45,7 +63,7 @@
           <input type="text" class="col-10 form-control" name="phone">
         </div>
         <div class="my-5">
-          <input type="submit" class="btn btn-primary float" value="Tambah Siswa">
+          <input type="submit" class="btn btn-primary float" value="Tambah User">
         </div>
       </form>
     </div>

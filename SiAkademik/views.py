@@ -17,19 +17,26 @@ db_users = dbname["users"] # Nama Tabel
 db_login = dbname['login']
 
 # Create your views here.
+def isLogin(r):
+    return r.session.get('login')
+def getRole(r):
+    role =  r.session.get('role')
+    return role
+
 def index(request):
-    loggedIn = request.session.get('login')
-    if not loggedIn:
+    if not isLogin(request):
         return redirect('login')
-    user_details = db_users.find()
-    data = {
-        'users' : user_details,
-    }
-    return render(request, 'index.html',data)
+    role = getRole(request)
+    if role == "ADMIN":
+        return redirect('home')
+    else:
+        return redirect('user')
+
+def home(request):
+    return render(request, 'home.html')
 
 def login(request):
-    loggedIn = request.session.get('login')
-    if loggedIn:
+    if isLogin(request):
         return redirect('home')
     return render(request, 'login.html')
 
@@ -40,11 +47,12 @@ def authenticate(request):
     result = db_login.find_one(data)
     if result is None:
         return redirect('login')
-    print(result)
     if not check_password(request.POST['password'],result['password']):
         return redirect('login')
     request.session['login'] = True
     request.session['username'] = request.POST['username']
+    request.session['role'] = result['role']
+    request.session['uid'] = str(result['_id'])
     return redirect('home')
 
 def logout(request):

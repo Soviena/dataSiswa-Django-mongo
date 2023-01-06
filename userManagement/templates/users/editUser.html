@@ -5,23 +5,41 @@
   <main style="margin-top: 10vh;" class="mx-3">
     <h2 class="my-5">Edit User</h2>
     <div class="container-fluid p-5 shadow">     
-      <form action="{% url 'updateUser' user|access_underscore_attr:'_id' %}" method="POST">
+      <form action="{% url 'updateUser' user.0|access_underscore_attr:'_id' %}" method="POST">
         {% csrf_token %}
         <div class="mb-2">
+          <label for="name" class="col-2 col-form-label fw-bold">Username</label>
+          <input type="text" class="col-10 form-control" name="username" value="{{user.0.userInfo.0.username}}">
+        </div>
+        <div class="mb-2">
+          <label for="name" class="col-2 col-form-label fw-bold">Password</label>
+          <input type="password" class="col-10 form-control" name="password">
+        </div>
+        <div class="mb-2">
+          <label for="name" class="col-2 col-form-label fw-bold">Role</label>
+          <select name="role" class="col-10 form-control" id="role">
+            <option disabled selected value="SISWA">Select Role</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="GURU">GURU</option>
+            <option value="STAFF">STAFF</option>
+            <option value="SISWA">SISWA</option>
+          </select>
+        </div>
+        <div class="mb-2">
           <label for="name" class="col-2 col-form-label fw-bold">Nama Lengkap</label>
-          <input type="text" class="col-10 form-control" name="name" value="{{ user.nama_Lengkap }}">
+          <input type="text" class="col-10 form-control" name="name" value="{{ user.0.nama_Lengkap }}">
         </div>
         <div class="mb-2">
           <label for="kelamin" class="col-2 col-form-label fw-bold">Jenis Kelamin</label>
           <div class="col-10">
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="kelamin" id="lakilaki" value="Laki-Laki" {% if user.jenis_kelamin == "Laki-Laki" %} checked {% endif %}>
+              <input class="form-check-input" type="radio" name="kelamin" id="lakilaki" value="Laki-Laki" {% if user.0.jenis_kelamin == "Laki-Laki" %} checked {% endif %}>
               <label class="form-check-label" for="lakilaki">
                 Laki-Laki
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="kelamin" id="perempuan" value="Perempuan" {% if user.jenis_kelamin == "Perempuan" %} checked {% endif %}>
+              <input class="form-check-input" type="radio" name="kelamin" id="perempuan" value="Perempuan" {% if user.0.jenis_kelamin == "Perempuan" %} checked {% endif %}>
               <label class="form-check-label" for="perempuan">
                 Perempuan
               </label>
@@ -30,22 +48,22 @@
         </div>
         <div class="mb-2">
           <label for="tempat-lahir" class="col-2 col-form-label fw-bold">Tempat Lahir</label>
-          <input type="text" class="col-10 form-control" name="tempat-lahir" value="{{ user.tempat_lahir }}">
+          <input type="text" class="col-10 form-control" name="tempat-lahir" value="{{ user.0.tempat_lahir }}">
         </div>
         <div class="mb-2">
           <label for="tanggal-lahir" class="col-2 col-form-label fw-bold">Tanggal Lahir</label>
-          <input type="date" class="col-10 form-control" name="tanggal-lahir" value="{{ user.tanggal_lahir }}">
+          <input type="date" class="col-10 form-control" name="tanggal-lahir" value="{{ user.0.tanggal_lahir }}">
         </div>
         <div class="mb-2">
           <label for="tanggal-lahir" class="col-2 col-form-label fw-bold">Alamat</label>
-          <textarea class="form-control mb-3 col-10" aria-label="With textarea" name="alamat"s="4">{{ user.alamat }}</textarea>
+          <textarea class="form-control mb-3 col-10" aria-label="With textarea" name="alamat"s="4">{{ user.0.alamat }}</textarea>
         </div>
         <div class="mb-2">
           <label for="tempat-lahir" class="col-2 col-form-label fw-bold">No. HP</label>
-          <input type="text" class="col-10 form-control" name="phone" value="{{ user.no_hp }}">
+          <input type="text" class="col-10 form-control" name="phone" value="{{ user.0.no_hp }}">
         </div>
         <div class="my-5">
-          <input type="submit" class="btn btn-primary float" value="Update Siswa">
+          <input type="submit" class="btn btn-primary float" value="Update User">
         </div>
       </form>
     </div>
