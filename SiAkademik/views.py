@@ -33,6 +33,11 @@ def index(request):
         return redirect('user')
 
 def home(request):
+    if not isLogin(request):
+        return redirect('login')
+    role = getRole(request)
+    if role != "ADMIN":
+        return redirect('user')
     return render(request, 'home.html')
 
 def login(request):
