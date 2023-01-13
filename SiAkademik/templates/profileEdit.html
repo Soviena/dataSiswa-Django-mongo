@@ -1,0 +1,67 @@
+{% load static %}
+{% load filters_ %}
+{% include 'object/header.html' %}
+    <!--Main layout-->
+  <!--Main layout-->
+  <main style="margin-top: 10vh;" class="mx-3">
+    <h2 class="my-5">Edit User</h2>
+    <div class="container-fluid p-5 shadow">     
+      <form action="{% url 'profileUpdate' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-2">
+          <label for="name" class="col-2 col-form-label fw-bold">Username</label>
+          <input type="text" class="col-10 form-control" name="username" value="{{userLogin.username}}">
+        </div>
+        <div class="mb-2">
+          <label for="name" class="col-2 col-form-label fw-bold">Password</label>
+          <input type="password" class="col-10 form-control" name="password">
+        </div>
+        <div class="mb-2">
+          <label for="name" class="col-2 col-form-label fw-bold">Nama Lengkap</label>
+          <input type="text" class="col-10 form-control" name="name" value="{{ userDetails.nama_Lengkap }}">
+        </div>
+        <div class="mb-2">
+          <label for="kelamin" class="col-2 col-form-label fw-bold">Jenis Kelamin</label>
+          <div class="col-10">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="kelamin" id="lakilaki" value="Laki-Laki" {% if userDetails.jenis_kelamin == "Laki-Laki" %} checked {% endif %}>
+              <label class="form-check-label" for="lakilaki">
+                Laki-Laki
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="kelamin" id="perempuan" value="Perempuan" {% if userDetails.jenis_kelamin == "Perempuan" %} checked {% endif %}>
+              <label class="form-check-label" for="perempuan">
+                Perempuan
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="mb-2">
+          <label for="tempat-lahir" class="col-2 col-form-label fw-bold">Tempat Lahir</label>
+          <input type="text" class="col-10 form-control" name="tempat-lahir" value="{{ userDetails.tempat_lahir }}">
+        </div>
+        <div class="mb-2">
+          <label for="tanggal-lahir" class="col-2 col-form-label fw-bold">Tanggal Lahir</label>
+          <input type="date" class="col-10 form-control" name="tanggal-lahir" value="{{ userDetails.tanggal_lahir }}">
+        </div>
+        <div class="mb-2">
+          <label for="tanggal-lahir" class="col-2 col-form-label fw-bold">Alamat</label>
+          <textarea class="form-control mb-3 col-10" aria-label="With textarea" name="alamat"s="4">{{ userDetails.alamat }}</textarea>
+        </div>
+        <div class="mb-2">
+          <label for="tempat-lahir" class="col-2 col-form-label fw-bold">No. HP</label>
+          <input type="text" class="col-10 form-control" name="phone" value="{{ userDetails.no_hp }}">
+        </div>
+        <div class="mb-2">
+          <label for="image-pic" class="col-2 col-form-label fw-bold">Profil Picture</label>
+          <input type="file" class="col-10 form-control" name="profile-pic">
+        </div>
+        <div class="my-5">
+          <input type="submit" class="btn btn-primary float" value="Update User">
+          <a href="{% url 'profile' userLogin.username %}" class="btn btn-outline-danger">Batalkan</a>
+        </div>
+      </form>
+    </div>
+  </main>
+{% include 'object/footer.html' %}

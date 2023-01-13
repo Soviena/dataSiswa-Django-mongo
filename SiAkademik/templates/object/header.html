@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="{% static 'css/mdb.min.css' %}">
     <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <script src="{% static 'js/jquery-3.6.1.min.js' %}"></script>
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap5.min.js' %}"></script>
+
 
     <title>Document</title>
 </head>
@@ -207,6 +211,7 @@
               data-mdb-toggle="dropdown"
               aria-expanded="false"
             > {{ request.session.username }}
+            {% if request.session.pic == "profilePic/None" %}
               <img
                 src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img (31).webp"
                 class="rounded-circle"
@@ -214,13 +219,23 @@
                 alt="Avatar"
                 loading="lazy"
               />
+            {% else %}
+              <img
+                src="{% static request.session.pic %}"
+                class="rounded-circle"
+                height="22"
+                alt="Avatar"
+                loading="lazy"
+                style="width:22px;height:22px; object-fit: cover; object-position: 25% 25%;"
+              />
+            {% endif %}
             </a>
             <ul
               class="dropdown-menu dropdown-menu-end"
               aria-labelledby="navbarDropdownMenuLink"
             >
               <li>
-                <a class="dropdown-item" href="#">My profile</a>
+                <a class="dropdown-item" href="{% url 'profile' request.session.username %}">My profile</a>
               </li>
               <li>
                 <a class="dropdown-item" href="#">Settings</a>

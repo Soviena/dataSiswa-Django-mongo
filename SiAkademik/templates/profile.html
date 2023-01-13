@@ -1,0 +1,88 @@
+{% load static %}
+{% load filters_ %}
+{% include 'object/header.html' %}
+    <!--Main layout-->
+    <main style="margin-top: 10vh;" class="mx-3">
+      <div class="container py-2">
+
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card mb-4">
+          <h4 class="my-2">My Profile</h4>
+          <div class="card-body text-center">
+            <img {% if userLogin.profilePic == "profilePic/None"  %} src="{% static 'profilePic/tes.jpeg' %}" {% else %} src='{% static userLogin.profilePic %}' {% endif%} alt="avatar"
+              class="rounded-circle mt-2" style="width:22vh;height:22vh; object-fit: cover; object-position: 25% 25%;">
+            <h5 class="my-3">{{userLogin.username}}</h5>
+            <p class="text-muted mb-1">{{userLogin.role}}</p>
+          </div>
+        </div>
+        
+      </div>
+      <div class="col-lg-12">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Nama Lengkap</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{userDetails.nama_Lengkap}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Jenis kelamin</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{userDetails.jenis_kelamin}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Tanggal Lahir</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{userDetails.tanggal_lahir}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Tempat Lahir</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{userDetails.tempat_lahir}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Phone</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{userDetails.no_hp}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Address</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{userDetails.alamat}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <a href="{% url 'profileEdit' %}" class="btn btn-primary {% if userLogin.username != request.session.username %} disabled {% endif %}"> Edit Profile</a>
+          </div>
+        </div>
+    </main>
+    <!--Main layout-->
+{% include 'object/footer.html' %}

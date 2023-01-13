@@ -5,11 +5,12 @@
   <main style="margin-top: 10vh;" class="mx-3">
     <h2 class="my-5">User Feedback</h2>
     <div class="container-fluid shadow">     
-      <table class="table table-responsive table-striped">
+      <table class="table table table-striped" id="userFeedback">
         <thead>
             <tr>
               <th>Username</th>
               <th>Feedback</th>
+              <th>Tanggal</th>
             </tr>
         </thead>
         <tbody>
@@ -17,16 +18,18 @@
             <tr>
               <td>{{ user.userDetail.0.username }}</td>
               <td>{{ user.feedback }}</td>
+              <td>{{ user.date }}</td>
             </tr>
           {% endfor %}
         </tbody>
-        <tfoot>
-            <td></td>
-            <td></td>
-        </tfoot>
       </table>
 
     </div>
+    <script>
+      $(document).ready(function () {
+        $('#userFeedback').DataTable();
+      });
+    </script>
   </main>
   <!--Main layout-->
 {% include 'object/footer.html' %}

@@ -5,7 +5,7 @@
   <main style="margin-top: 10vh;" class="mx-3">
     <h2 class="my-5">Tambah User</h2>
     <div class="container-fluid p-5 shadow">     
-      <form action="{% url 'newUser' %}" method="POST" >
+      <form action="{% url 'newUser' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="mb-2">
           <label for="username" class="col-2 col-form-label fw-bold">Username</label>
@@ -61,6 +61,10 @@
         <div class="mb-2">
           <label for="tempat-lahir" class="col-2 col-form-label fw-bold">No. HP</label>
           <input type="text" class="col-10 form-control" name="phone">
+        </div>
+        <div class="mb-2">
+          <label for="image-pic" class="col-2 col-form-label fw-bold">Profil Picture</label>
+          <input type="file" class="col-10 form-control" name="profile-pic">
         </div>
         <div class="my-5">
           <input type="submit" class="btn btn-primary float" value="Tambah User">
