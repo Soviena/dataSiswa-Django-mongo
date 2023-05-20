@@ -168,12 +168,14 @@ def exportCSV(request):
     writer = csv.writer(response)
 
     # Write the header row
-    writer.writerow(['_id','nama_Lengkap', 'jenis_kelamin', 'tempat_lahir','tanggal_lahir','alamat','no_hp','_idLogin','_idUser','username','role','password'])
-    for doc in data:
-        if len(doc['userLogin']) >= 1:
-            writer.writerow([doc['_id'],doc['nama_Lengkap'], doc['jenis_kelamin'], doc['tempat_lahir'],doc['tanggal_lahir'],doc['alamat'],doc['no_hp'],doc['userLogin'][0]['_id'],doc['userLogin'][0]['_idUser'],doc['userLogin'][0]['username'],doc['userLogin'][0]['role'],doc['userLogin'][0]['password']])
-        else:
-            writer.writerow([doc['_id'],doc['nama_Lengkap'], doc['jenis_kelamin'], doc['tempat_lahir'],doc['tanggal_lahir'],doc['alamat'],doc['no_hp']])
+    writer.writerow(['_id','nama_Lengkap', 'jenis_kelamin', 'tempat_lahir','tanggal_lahir','alamat','no_hp','_idLogin','_idUser','username','role','password','userData'])
+    for doc in data:         
+        if len(doc['userLogin']) == 0:
+            doc['userLogin'].append({})
+        writer.writerow([
+            doc['_id'],doc['nama_Lengkap'], doc['jenis_kelamin'], doc['tempat_lahir'],doc['tanggal_lahir'],doc['alamat'],doc['no_hp'],
+            doc['userLogin'][0].get('_id'),doc['userLogin'][0].get('_idUser'),doc['userLogin'][0].get('username'),doc['userLogin'][0].get('role'),doc['userLogin'][0].get('password'),
+            doc['userData']])
 
     return response
 
@@ -187,16 +189,18 @@ def importCSV(request):
 
         # Process the rows in the file
         for row in reader:
+            print(row)
             data = {
                 "nama_Lengkap" : row['nama_Lengkap'],
                 "jenis_kelamin" : row['jenis_kelamin'],
                 "tempat_lahir" : row['tempat_lahir'],
                 "tanggal_lahir" : row['tanggal_lahir'],
                 "alamat": row['alamat'],
-                "no_hp": row['no_hp']
+                "no_hp": row['no_hp'],
+                "userData" : json.loads(row['userData'].replace("'", '"'))
             }
             userDetail.replace_one({"_id": ObjectId(row['_id'])},data,upsert=True)
-            if row['_idLogin'] != "None":
+            if row['_idLogin'] not in ["None",'']:
                 dataLogin = {
                     "_idUser" : ObjectId(row['_idUser']),
                     "username": row['username'],
