@@ -116,6 +116,19 @@
                                   <p class="text-muted mb-0">{{user.alamat}}</p>
                                 </div>
                               </div>
+                              {% if user.userData %}
+                                {% for key,value in user.userData.items%}
+                                  <hr>
+                                  <div class="row">
+                                    <div class="col-sm-3">
+                                      <p class="mb-0">{{key}}</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                      <p class="text-muted mb-0">{{value}}</p>
+                                    </div>
+                                  </div>
+                                {% endfor %}
+                              {% endif %}
                             </div>
                           </div>
                         </div>
