@@ -1,0 +1,62 @@
+{% load static %}
+{% load filters_ %}
+{% include 'object/header.html' %}
+  <!--Main layout-->
+  <main style="margin-top: 10vh;" class="mx-3">
+    <h2 class="my-5">Tambah Kategori</h2>
+    <div class="container-fluid p-5 shadow">     
+      <form action="{% url 'newCategory' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-2">
+          <label for="name" class="col-2 col-form-label fw-bold">Nama Kategori</label>
+          <input type="text" class="col-10 form-control" name="name">
+        </div>
+        
+        <div class="mb-2">
+          <table id="myTable" class="table">
+            <thead>
+              <tr>
+                <th>Key</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="text" class="form-control" name="key"></td>
+                <td><button type="button" class="btn btn-danger" onclick="deleteRow(this)">Delete</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button onclick="addRow()" class="btn btn-outline-primary">Add Row</button>
+        </div>
+        
+        
+        <div class="my-5">
+          <input type="submit" class="btn btn-primary float" value="Tambah Kategori">
+          <a href="javascript:history.back() " class="btn btn-outline-danger">Batalkan</a>
+        </div>
+      </form>
+    </div>
+    <script>
+
+      function deleteRow(button) {
+        var row = button.parentNode.parentNode; // Get the parent row
+        row.parentNode.removeChild(row); // Remove the row from the table
+      }
+
+
+      function addRow() {
+        event.preventDefault();
+        var table = document.getElementById("myTable");
+        var row = table.insertRow(-1); // Insert row at the last position (-1)
+    
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+    
+        cell1.innerHTML = '<td><input type="text" class="form-control" name="key"></td>';
+        cell2.innerHTML = '<td><button type="button" class="btn btn-danger" onclick="deleteRow(this)">Delete</button></td>';
+      }
+    </script>
+  </main>
+  <!--Main layout-->
+{% include 'object/footer.html' %}

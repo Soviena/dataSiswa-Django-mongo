@@ -12,4 +12,7 @@ urlpatterns = [
     path('users/feedback/',views.userFeedback,name='userFeedback'),
     path('users/export/userdata/',views.exportCSV,name='exportcsv'),
     path('users/import/userdata/',views.importCSV,name='importcsv'),
-    ]
+    path('users/import/userdata/',views.importCSV,name='importcsv'),
+    path('users/category/add/',views.addCategory,name='addCategory'),
+    path('users/category/add/new',views.newCategory,name='newCategory'),
+    ] 

@@ -10,11 +10,22 @@ import io
 import os
 import csv
 import pymongo
+import json
+from bson import ObjectId
+
 from django.conf import settings
 my_client = pymongo.MongoClient(settings.DB_NAME)
 dbname = my_client['datasiswa'] # Nama Database
 userDetail = dbname["users"] # Nama Tabel
 userLogin = dbname["login"] # Nama Tabel
+categoryDb = dbname["category"]
+
+# Custom JSON encoder class to handle ObjectId serialization
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        return super().default(o)
 
 
 # Create your views here.
@@ -36,11 +47,25 @@ def index(request):
         }
     ])
     data = [doc for doc in cursor]
+    print(data)
     return render(request, 'users/index.html',{'data': data})
 
 def addUser(request):
-    return render(request, 'users/addUser.html')
+    categoryList = categoryDb.find()
+    categoryJson = json.dumps([document for document in categoryDb.find()],cls=JSONEncoder)
+    return render(request, 'users/addUser.html',{"categoryList":categoryList,"categoryJSON":categoryJson})
 
+def addCategory(request):
+    return render(request, 'users/addCategory.html')
+
+def newCategory(request):
+    data = {
+        "name" : request.POST["name"],
+        "template" : request.POST.getlist('key')
+    }
+    categoryDb.insert_one(data)
+    return redirect('addUser')
+    
 def editUser(request,user_id):
     user_details = userDetail.find_one({"_id": ObjectId(user_id)})
     user_login = userLogin.find_one({"_idUser": ObjectId(user_id)})
@@ -58,25 +83,36 @@ def createUser(request):
     "tempat_lahir" : request.POST['tempat-lahir'],
     "tanggal_lahir" : request.POST['tanggal-lahir'],
     "alamat": request.POST['alamat'],
-    "no_hp": request.POST['phone']
+    "no_hp": request.POST['phone'],
+    "userData" : dict(zip(request.POST.getlist('key'),request.POST.getlist('value')))
     }
     ids = userDetail.insert_one(data)
     if not request.POST['username'] == "":
-        data = {
-            "_idUser" : ids.inserted_id,
-            "username": request.POST['username'],
-            "password": make_password(request.POST['password']),
-            "role": request.POST['role']
-        }
-        if request.FILES.get('profile-pic'):
-            uploaded_file = request.FILES['profile-pic']
-            file_name, file_extension = os.path.splitext(uploaded_file.name)
-            hashed_file_name = hashlib.sha256(file_name.encode()).hexdigest() + file_extension
-            uploaded_file.name = hashed_file_name
-            default_storage.save("static/profilePic/"+uploaded_file.name, uploaded_file)
-            data['profilePic'] = uploaded_file.name
-        userLogin.insert_one(data)
+        createLogin(request, ids.inserted_id)
     return redirect('userManagementIndex')
+
+def profilePicHandler(request, update=False):
+    uploaded_file = request.FILES['profile-pic']
+    file_name, file_extension = os.path.splitext(uploaded_file.name)
+    hashed_file_name = hashlib.sha256(file_name.encode()).hexdigest() + file_extension
+    uploaded_file.name = hashed_file_name
+    default_storage.save("static/profilePic/"+uploaded_file.name, uploaded_file)
+    if update:
+        userLogin.update_one({"_idUser":ObjectId(user_id)},{'$set':{'profilePic':uploaded_file.name}})
+        return
+    return uploaded_file.name    
+
+
+def createLogin(request, userid, update=False):
+    data = {
+        "_idUser" : userid,
+        "username": request.POST['username'],
+        "password": make_password(request.POST['password']),
+        "role": request.POST['role']
+    }
+    if request.FILES.get('profile-pic'):
+        data['profilePic'] = profilePicHandler(request)
+    userLogin.insert_one(data)
 
 def updateUser(request, user_id):
     data = {
@@ -88,17 +124,15 @@ def updateUser(request, user_id):
         "no_hp": request.POST['phone']
     }
     userDetail.replace_one({"_id": ObjectId(user_id)},data)
+    if userLogin.find_one({"_idUser":ObjectId(user_id)}) is None:
+        createLogin(request, ObjectId(user_id))
+    else:
+        userLogin.update_one({"_idUser":ObjectId(user_id)},{'$set':{'username':request.POST['username']}})
+        userLogin.update_one({"_idUser":ObjectId(user_id)},{'$set':{'role':request.POST['role']}})
+        if request.POST['password'] != "":
+            userLogin.update_one({"_idUser":ObjectId(user_id)},{'$set':{'password':make_password(request.POST['password'])}})
     if request.FILES.get('profile-pic'):
-        uploaded_file = request.FILES['profile-pic']
-        file_name, file_extension = os.path.splitext(uploaded_file.name)
-        hashed_file_name = hashlib.sha256(file_name.encode()).hexdigest() + file_extension
-        uploaded_file.name = hashed_file_name
-        default_storage.save("static/profilePic/"+uploaded_file.name, uploaded_file)
-        userLogin.update_one({"_idUser":ObjectId(user_id)},{'$set':{'profilePic':uploaded_file.name}})
-    userLogin.update_one({"_idUser":ObjectId(user_id)},{'$set':{'username':request.POST['username']}})
-    userLogin.update_one({"_idUser":ObjectId(user_id)},{'$set':{'role':request.POST['role']}})
-    if request.POST['password'] != "":
-        userLogin.update_one({"_idUser":ObjectId(user_id)},{'$set':{'password':make_password(request.POST['username'])}})
+        profilePicHandler(request, True)
         
     return redirect('userManagementIndex')
 

@@ -43,7 +43,16 @@
                           <div class="card mb-4">
                             <h4 class="my-2">My Profile</h4>
                             <div class="card-body text-center">
-                              <img {% if 'profilePic' not in user.userInfo.0 %} src="{% static 'profilePic/tes.jpeg' %}" {% else %} src='{% static "profilePic/"|add:user.userInfo.0.profilePic %}' {% endif%} alt="avatar"
+                              <img {% if user.userInfo|length > 0 %} 
+                                      {% if 'profilePic' not in user.userInfo.0 %} 
+                                        src="{% static 'profilePic/tes.jpeg' %}" 
+                                      {% else %} 
+                                        src='{% static "profilePic/"|add:user.userInfo.0.profilePic %}' 
+                                      {% endif%} 
+                                    {%else%} 
+                                      src="{% static 'profilePic/tes.jpeg' %}"
+                                    {% endif%} 
+                                    alt="avatar"
                                 class="rounded-circle mt-2" style="width:22vh;height:22vh; object-fit: cover; object-position: 25% 25%;">
                               <h5 class="my-3">{{user.userInfo.0.username}}</h5>
                               <p class="text-muted mb-1">{{user.userInfo.0.role}}</p>
