@@ -30,12 +30,15 @@ class JSONEncoder(json.JSONEncoder):
 
 # Create your views here.
 def checkAuthentication(r):
-    role =  e.session.get('role')
+    role =  r.session.get('role')
+    print(role)
     if role != "ADMIN":
-        return redirect('index')
-    return
+        return True
+    return False
 
 def index(request):
+    if checkAuthentication(request):
+        return redirect('index')
     cursor = dbname.users.aggregate([
         {
             '$lookup': {
@@ -47,7 +50,6 @@ def index(request):
         }
     ])
     data = [doc for doc in cursor]
-    print(data)
     return render(request, 'users/index.html',{'data': data})
 
 def addUser(request):
@@ -58,6 +60,23 @@ def addUser(request):
 def addCategory(request):
     return render(request, 'users/addCategory.html')
 
+def editCategory(request):
+    categoryList = categoryDb.find()
+    categoryJson = json.dumps([document for document in categoryDb.find()],cls=JSONEncoder)
+    return render(request, 'users/editCategory.html',{"categoryList":categoryList,"categoryJSON":categoryJson})
+
+def updateCategory(request, category_id):
+    data = {'$set':{ 
+        "template" : request.POST.getlist('key')
+    }}
+    categoryDb.update_one({"_id": ObjectId(category_id)},data) 
+    return redirect('editCategory')
+
+def deleteCategory(request, category_id):
+    categoryDb.delete_one({"_id": ObjectId(category_id)})
+    return redirect('editCategory')
+
+
 def newCategory(request):
     data = {
         "name" : request.POST["name"],
@@ -67,9 +86,11 @@ def newCategory(request):
     return redirect('addUser')
     
 def editUser(request,user_id):
+    categoryList = categoryDb.find()
+    categoryJson = json.dumps([document for document in categoryDb.find()],cls=JSONEncoder)    
     user_details = userDetail.find_one({"_id": ObjectId(user_id)})
     user_login = userLogin.find_one({"_idUser": ObjectId(user_id)})
-    return render(request, 'users/editUser.html',{'userDetails':user_details,'userLogin':user_login})
+    return render(request, 'users/editUser.html',{'userDetails':user_details,'userLogin':user_login, "categoryList":categoryList,"categoryJSON":categoryJson})
 
 def deleteUser(request,user_id):
     userDetail.delete_one({"_id": ObjectId(user_id)})
@@ -104,6 +125,8 @@ def profilePicHandler(request, update=False):
 
 
 def createLogin(request, userid, update=False):
+    if request.POST['username'] == "":
+        return
     data = {
         "_idUser" : userid,
         "username": request.POST['username'],
@@ -121,7 +144,8 @@ def updateUser(request, user_id):
         "tempat_lahir" : request.POST['tempat-lahir'],
         "tanggal_lahir" : request.POST['tanggal-lahir'],
         "alamat": request.POST['alamat'],
-        "no_hp": request.POST['phone']
+        "no_hp": request.POST['phone'],
+        "userData" : dict(zip(request.POST.getlist('key'),request.POST.getlist('value')))
     }
     userDetail.replace_one({"_id": ObjectId(user_id)},data)
     if userLogin.find_one({"_idUser":ObjectId(user_id)}) is None:
@@ -180,39 +204,38 @@ def exportCSV(request):
     return response
 
 def importCSV(request):
-        # Get the uploaded file
-        uploaded_file = request.FILES['csv']
+    # Get the uploaded file
+    uploaded_file = request.FILES['csv']
 
-         # Use the csv module to read the file
-        csv_file = io.TextIOWrapper(uploaded_file, encoding='utf-8')
-        reader = csv.DictReader(csv_file)
+        # Use the csv module to read the file
+    csv_file = io.TextIOWrapper(uploaded_file, encoding='utf-8')
+    reader = csv.DictReader(csv_file)
 
-        # Process the rows in the file
-        for row in reader:
-            print(row)
-            data = {
-                "nama_Lengkap" : row['nama_Lengkap'],
-                "jenis_kelamin" : row['jenis_kelamin'],
-                "tempat_lahir" : row['tempat_lahir'],
-                "tanggal_lahir" : row['tanggal_lahir'],
-                "alamat": row['alamat'],
-                "no_hp": row['no_hp'],
-                "userData" : json.loads(row['userData'].replace("'", '"'))
+    # Process the rows in the file
+    for row in reader:
+        data = {
+            "nama_Lengkap" : row['nama_Lengkap'],
+            "jenis_kelamin" : row['jenis_kelamin'],
+            "tempat_lahir" : row['tempat_lahir'],
+            "tanggal_lahir" : row['tanggal_lahir'],
+            "alamat": row['alamat'],
+            "no_hp": row['no_hp'],
+            "userData" : json.loads(row['userData'].replace("'", '"'))
+        }
+        userDetail.replace_one({"_id": ObjectId(row['_id'])},data,upsert=True)
+        if row['_idLogin'] not in ["None",'']:
+            dataLogin = {
+                "_idUser" : ObjectId(row['_idUser']),
+                "username": row['username'],
+                "password": row['password'],
+                "role":row['role']
             }
-            userDetail.replace_one({"_id": ObjectId(row['_id'])},data,upsert=True)
-            if row['_idLogin'] not in ["None",'']:
-                dataLogin = {
-                    "_idUser" : ObjectId(row['_idUser']),
-                    "username": row['username'],
-                    "password": row['password'],
-                    "role":row['role']
-                }
-                userLogin.replace_one({"_id":ObjectId(row['_idLogin'])},dataLogin,upsert=True)
+            userLogin.replace_one({"_id":ObjectId(row['_idLogin'])},dataLogin,upsert=True)
 
 
-        # Delete the file when you're done with it
-        csv_file.close()
-        del uploaded_file
+    # Delete the file when you're done with it
+    csv_file.close()
+    del uploaded_file
 
-        # Redirect to a success page
-        return redirect('userManagementIndex')
+    # Redirect to a success page
+    return redirect('userManagementIndex')

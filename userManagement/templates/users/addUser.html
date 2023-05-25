@@ -76,8 +76,9 @@
           </select>
         </div>
         <a href="{% url 'addCategory' %}" class="btn btn-outline-primary">Tambah Kategori</a>
-
+        <a href="{% url 'editCategory' %}" class="btn btn-outline-warning">Edit Kategori</a>
         <div class="mb-2">
+          <label for="Kategori" class="col-2 col-form-label fw-bold">User Data</label>
           <table id="templateTable" class="table">
             <thead>
               <tr>
@@ -87,13 +88,6 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                {% for key in categoryList %}       
-                  <td><input type="text" class="form-control" name="key">{{key}}</td>
-                  <td><input type="text" class="form-control" name="value"></td>
-                  <td><button type="button" class="btn btn-danger" onclick="deleteRow(this)">Delete</button></td>
-                {% endfor %}                
-              </tr>
             </tbody>
           </table>
           <button onclick="addRow()" class="btn btn-outline-primary">Add Row</button>

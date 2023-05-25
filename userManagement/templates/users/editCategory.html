@@ -1,0 +1,100 @@
+{% load static %}
+{% load filters_ %}
+{% include 'object/header.html' %}
+  <!--Main layout-->
+  <main style="margin-top: 10vh;" class="mx-3">
+    <h2 class="my-5">Edit Kategori</h2>
+    <div class="container-fluid p-5 shadow">     
+      <form action="" method="POST" enctype="multipart/form-data" id="form-category">
+        {% csrf_token %}
+        <div class="mb-2">
+          <label for="name" class="col-2 col-form-label fw-bold">Pilih Kategori</label>
+          <select name="category" onchange="changeTemplate(this)" class="col-10 form-control" id="category">
+            <option disabled selected >Pilih Kategori</option>
+              {% for category in categoryList %}
+                <option value="{{category.name}}">{{category.name}}</option>                
+              {% endfor %}
+          </select>
+        </div>
+        
+        <div class="mb-2">
+          <table id="templateTable" class="table">
+            <thead>
+              <tr>
+                <th>Key</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="text" class="form-control" name="key"></td>
+                <td><button type="button" class="btn btn-danger" onclick="deleteRow(this)">Hapus</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button onclick="addRow()" class="btn btn-outline-primary">Tambah baris</button>
+        </div>
+        
+        
+        <div class="my-5">
+          <input type="submit" id="btn-submit" class="btn btn-warning float disabled" value="Edit Kategori">
+          <button onclick="deleteCategory()" id="btn-delete" class="btn btn-danger disabled">Hapus Kategori</button>
+          <a href="{% url 'userManagementIndex' %}" class="btn btn-outline-danger">Batalkan</a>
+        </div>
+      </form>
+    </div>
+    <script>
+
+      function deleteRow(button) {
+        var row = button.parentNode.parentNode; // Get the parent row
+        row.parentNode.removeChild(row); // Remove the row from the table
+      }
+
+
+      function addRow(key="") { 
+        event.preventDefault();
+        var table = document.getElementById("templateTable");
+        var row = table.insertRow(-1); // Insert row at the last position (-1)
+    
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);        
+    
+        cell1.innerHTML = `<td><input type="text" class="form-control" name="key" value="${key}"></td>`;
+        cell2.innerHTML = '<td><button type="button" class="btn btn-danger" onclick="deleteRow(this)">Delete</button></td>';
+      }
+
+      function removeAllRows() {
+        var table = document.getElementById("templateTable");
+        var rowCount = table.rows.length;
+
+        // Start from the last row and remove each row
+        for (var i = rowCount - 1; i > 0; i--) {
+          table.deleteRow(i);
+        }
+      }  
+      
+      function changeTemplate(option) {
+        removeAllRows()
+        categoryJSON = JSON.parse(`{{categoryJSON|escapejs}}`)
+        document.getElementById('btn-delete').setAttribute("onclick", "deleteCategory('"+categoryJSON[option.selectedIndex-1]['_id']+"')");
+        document.getElementById('form-category').setAttribute("action", "/userManagement/users/category/edit/update/"+categoryJSON[option.selectedIndex-1]['_id']);
+        document.getElementById('btn-delete').classList.remove('disabled')
+        document.getElementById('btn-submit').classList.remove('disabled')
+
+        template = categoryJSON[option.selectedIndex-1]["template"]
+        template.forEach(element => {
+          addRow(element)
+        });
+      }      
+
+      function deleteCategory(id){
+        event.preventDefault(); 
+        if (confirm("yakin ingin menghapus kategori ?")) {
+          window.location.href = `/userManagement/users/category/delete/${id}`
+        }
+      }
+
+    </script>
+  </main>
+  <!--Main layout-->
+{% include 'object/footer.html' %}
