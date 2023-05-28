@@ -30,6 +30,7 @@ urlpatterns = [
     path('profile/edit', views.profileEdit, name="profileEdit"),
     path('profile/update', views.profileUpdate, name="profileUpdate"),
     path('userManagement/',include('userManagement.urls')),
-    path('user/',include('user.urls'))
+    path('user/',include('user.urls')),
+    path('absensi/',include('absensi.urls'))
 ]
 urlpatterns += staticfiles_urlpatterns()

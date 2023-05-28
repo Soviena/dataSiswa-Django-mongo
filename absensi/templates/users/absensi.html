@@ -1,0 +1,67 @@
+{% load static %}
+{% include 'object/header.html' %}
+  <!--Main layout-->
+  <main style="margin-top: 10vh;" class="mx-3">
+    <h2 class="my-5">ABSENSI</h2>
+    <div class="container-fluid p-5 shadow">     
+      <form action="{% url 'newUser' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-2">
+          <label for="mata pelajaran" class="col-2 col-form-label fw-bold">Mata Pelajaran</label>
+          <select name="mapel" class="col-10 form-control" id="mapel">
+            <option disabled selected value="">Pilih Mata Pelajaran</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label for="name" class="col-2 col-form-label fw-bold">Nama Pengajar</label>
+          <input type="text" class="col-10 form-control" disabled value="namaGueru" name="name">
+        </div>
+        <div class="mb-2">
+          <label for="pertemuan" class="col-2 col-form-label fw-bold">pertemuan ke</label>
+          <input type="number" class="col-10 form-control" value="" name="pertemuan">
+        </div>        
+        <div class="mb-2">
+          <label for="tanggal-kelas" class="col-2 col-form-label fw-bold">Tanggal Pelajaran</label>
+          <input type="date" class="col-10 form-control" name="tanggal-kelas">
+        </div>
+        <div class="mb-2">
+          <label for="kelas" class="col-2 col-form-label fw-bold">Kelas</label>
+          <select name="kelas" class="col-10 form-control" id="kelas">
+            <option disabled selected value="">Pilih Kelas</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label for="materi" class="col-2 col-form-label fw-bold">Materi</label>
+          <input type="text" class="col-10 form-control" value="" materi="name">
+        </div>
+        <div class="mb-2">
+          <label for="materi" class="col-2 col-form-label fw-bold">Catatan Tambahan</label>
+          <textarea class="form-control mb-3 col-10" aria-label="With textarea" name="catatan"s="4"></textarea>
+        </div>        
+        <div class="mb-2">
+          <label for="status" class="col-2 col-form-label fw-bold">Status Absensi</label>
+          <input type="text" class="col-10 form-control" disabled name="status">
+        </div>
+        <div class="mb-2">
+          <label for="submit-time" class="col-2 col-form-label fw-bold">Waktu Submit</label>
+          <input type="text" class="col-10 form-control" disabled name="submit-time">
+        </div>        
+        <div class="mb-2">
+          <label for="update-time" class="col-2 col-form-label fw-bold">Waktu Update</label>
+          <input type="text" class="col-10 form-control" disabled name="update-time">
+        </div>        
+        <div class="mb-2">
+          <label for="picture" class="col-2 col-form-label fw-bold">Upload Foto</label>
+          <input type="file" class="col-10 form-control" name="picture">
+        </div>      
+        <div class="my-5">
+          <input type="submit" class="btn btn-primary float" value="Tambah absensi">
+          <a href="{% url 'userManagementIndex' %}" class="btn btn-outline-danger">Batalkan</a>
+        </div>
+      </form>
+    </div>    
+  </main>
+  <!--Main layout-->
+{% include 'object/footer.html' %}
