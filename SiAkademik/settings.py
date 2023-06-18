@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-bk5xf)6bl-$^0vq4#5tmq#4i$h=+xcqqb8#l8oc95)cc$g5s0q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["django.belajarpro.online"]
+ALLOWED_HOSTS = ["localhost","django.belajarpro.online"]
 
 
 # Application definition
@@ -123,11 +123,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = 'staticfile/'
+STATIC_ROOT = 'static/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static/'),
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
