@@ -1,0 +1,76 @@
+{% load static %}
+{% load filters_ %}
+{% include 'object/header.html' %}
+  <!--Main layout-->
+  <main style="margin-top: 10vh;" class="mx-3">
+    <h2 class="my-5">ABSENSI</h2>
+    <div class="container-fluid shadow">     
+      <table class="table table table-striped" id="userTable">
+        <thead>
+            <tr>
+              <th>pertemuan</th>
+              <th>Materi</th>
+              <th>Tanggal</th>
+              <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% if data %}
+            {% for absensi in data %}
+              <tr>
+                <td>{{ absensi.pertemuan }}</td>
+                <td>{{ absensi.materi }}</td>
+                <td>{{ absensi.waktu_submit }}</td>
+                <td>
+                    <a href="{% url 'editAbsensi' absensi|access_underscore_attr:'_id' %}" class="btn btn-primary">Edit</a>
+                    <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteAbsensi' absensi|access_underscore_attr:'_id' %}`;}">Delete</button>
+                    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="">View Data</button>
+                </td>
+              </tr>
+
+            {% endfor %}
+          {% endif %}
+        </tbody>
+        <tfoot>
+            <td>
+              <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#importCsv">
+                Import Backup
+              </button>
+              <a href="{% url 'exportcsv' %}" class="btn btn-outline-warning">Export Backup</a></td>
+            <td></td>
+            <td></td>
+            <td>
+              <a href="{% url 'addAbsensi' %}" class="btn btn-outline-primary">Tambah Absensi</a>
+            </td>
+        </tfoot>
+      </table>
+
+    </div>
+  </main>
+  <div class="modal fade" id="importCsv" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Import CSV</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{% url 'importcsv' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-body">
+            <input type="file" name="csv" id="csv" class="form-control">
+          </div>
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-primary" value="Upload">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(document).ready(function () {
+      $('#userTable').DataTable();
+    });
+  </script>
+  <!--Main layout-->
+{% include 'object/footer.html' %}

@@ -23,7 +23,7 @@
               <td>{{ user.userInfo.0.role }}</td>
               <td>{{ user.no_hp }}</td>
               <td>
-                  <a href="{% url 'editUser' user|access_underscore_attr:'_id' %}" class="btn btn-secondary">Edit</a>
+                  <a href="{% url 'editUser' user|access_underscore_attr:'_id' %}" class="btn btn-primary">Edit</a>
                   <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteUser' user|access_underscore_attr:'_id' %}`;}">Delete</button>
                   <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#data-{{ user|access_underscore_attr:'_id' }}">View Data</button>
               </td>

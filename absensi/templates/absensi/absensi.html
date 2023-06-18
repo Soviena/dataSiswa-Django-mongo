@@ -1,0 +1,169 @@
+{% load static %}
+{% load filters_ %}
+{% include 'object/header.html' %}
+  <!--Main layout-->
+  <main style="margin-top: 10vh;" class="mx-3">
+    <h2 class="my-5">ABSENSI</h2>
+    <div class="container-fluid p-5 shadow">     
+      <form action="{% url 'createAbsensi' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!-- <div class="mb-2">
+          <label for="mata pelajaran" class="col-2 col-form-label fw-bold">Mata Pelajaran</label>
+          <select name="mapel" class="col-10 form-control" id="mapel">
+            <option disabled selected value="">Pilih Mata Pelajaran</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+        </div> -->
+        <div class="mb-2">
+          <label for="name" class="col-2 col-form-label fw-bold">Mata Pelajaran</label>
+          <input type="text" class="col-10 form-control" value="" name="mapel">
+        </div>        
+        <div class="mb-2">
+          <label for="name" class="col-2 col-form-label fw-bold">Nama Pengajar</label>
+          <input type="text" class="col-10 form-control" readonly value="{{userLogin.nama_Lengkap}}" name="name">
+        </div>
+        <div class="mb-2">
+          <label for="pertemuan" class="col-2 col-form-label fw-bold">pertemuan ke</label>
+          <input type="number" class="col-10 form-control" value="" name="pertemuan">
+        </div>        
+        <div class="mb-2">
+          <label for="tanggal-kelas" class="col-2 col-form-label fw-bold">Tanggal Pembelajaran</label>
+          <input type="date" class="col-10 form-control" name="tanggal-kelas">
+        </div>
+        <div class="mb-2">
+          <label for="kelas" class="col-2 col-form-label fw-bold">Kelas</label>
+          <input type="text" class="col-10 form-control" value="" name="kelas" onchange=changeKelas(this.value)>
+        </div>
+        <div class="mb-2">
+          <label for="materi" class="col-2 col-form-label fw-bold">Materi</label>
+          <input type="text" class="col-10 form-control" value="" name="materi">
+        </div>
+        <div class="mb-2">
+          <label for="materi" class="col-2 col-form-label fw-bold">Catatan Tambahan</label>
+          <textarea class="form-control mb-3 col-10" aria-label="With textarea" name="catatan"s="4"></textarea>
+        </div>        
+        <div class="mb-2">
+          <label for="status" class="col-2 col-form-label fw-bold">Status Absensi</label>
+          <input type="text" class="col-10 form-control" value="Belum Di Submit" readonly name="status">
+        </div>
+        <div class="mb-2">
+          <label for="submit-time" class="col-2 col-form-label fw-bold">Waktu Submit</label>
+          <input type="text" class="col-10 form-control" readonly name="submit-time">
+        </div>        
+        <div class="mb-2">
+          <label for="update-time" class="col-2 col-form-label fw-bold">Waktu Update</label>
+          <input type="text" class="col-10 form-control" readonly name="update-time">
+        </div>        
+        <div class="mb-2">
+          <label for="picture" class="col-2 col-form-label fw-bold">Upload Foto</label>
+          <input type="file" class="col-10 form-control" name="picture">
+        </div>      
+        <div class="my-5">
+          <input type="submit" class="btn btn-primary float" value="Tambah absensi">
+          <a href="{% url 'userManagementIndex' %}" class="btn btn-outline-danger">Batalkan</a>
+        </div>
+        <table id="tableSiswa" class="table table">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>NIS</th>
+              <th>Nama</th>
+              <th>Kelas</th>
+              <th>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="checkbox1" onchange="selectAllOptions(this)">
+                  <label class="form-check-label" for="checkbox1">
+                    Check semua hadir
+                  </label>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>          
+            {% for user in data %}
+              {% if user.userInfo and user.userInfo.0.role in role %}                                                         
+              {% else %}
+              <tr> 
+                <td>{{ forloop.counter }}</td>
+                <td>
+                  {% if user.userData %}
+                    {{ user.userData.nis }}
+                    <input type="hidden" class="col-10 form-control" name="nis[{{ forloop.counter }}]" value="{{ user.userData.nis }}">
+                  {% endif %}
+
+                </td>
+                <td>
+                  {{ user.nama_Lengkap }}
+                  <input type="hidden" class="col-10 form-control" name="siswaName[{{ forloop.counter }}]" value="{{ user.nama_Lengkap }}">
+                  <input type="hidden" class="col-10 form-control" name="idSiswa[{{ forloop.counter }}]" value="{{  user|access_underscore_attr:'_id' }}">
+                </td>
+                <td>
+                  {% if user.userData %}
+                    {{ user.userData.kelas }}
+                    <input type="hidden" class="col-10 form-control" name="kelas[{{ forloop.counter }}]" value="{{ user.userData.kelas }}">
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="form-group">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input radio-hadir" type="radio" name="status[{{ forloop.counter }}]" id="hadir-{{ forloop.counter }}" value="hadir">
+                      <label class="form-check-label" for="hadir-{{ forloop.counter }}">
+                        HADIR
+                      </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input radio" type="radio" name="status[{{ forloop.counter }}]" id="izin-{{ forloop.counter }}" value="izin">
+                      <label class="form-check-label" for="izin-{{ forloop.counter }}">
+                        IZIN
+                      </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input radio" type="radio" name="status[{{ forloop.counter }}]" id="sakit-{{ forloop.counter }}" value="sakit">
+                      <label class="form-check-label" for="sakit-{{ forloop.counter }}">
+                        SAKIT
+                      </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input radio-alfa" type="radio" name="status[{{ forloop.counter }}]" id="alfa-{{ forloop.counter }}" value="alfa" checked>
+                      <label class="form-check-label" for="alfa-{{ forloop.counter }}">
+                        ALFA
+                      </label>
+                    </div>
+                  </div>                  
+                </td>
+              </tr>                       
+              {% endif %}              
+            {% endfor %}
+          </tbody>
+        </table>
+      </form>
+    </div>    
+  </main>
+  <script>
+    var table = null;
+    $(document).ready(function () {
+      table = $('#tableSiswa').DataTable({
+        paging: false,
+      });
+    });
+
+    function changeKelas(kelas) {
+      table.columns(3).search(kelas).draw();
+    }
+
+    function selectAllOptions(checkbox) {
+      var radios_hadir = document.getElementsByClassName("radio-hadir");
+      var radios_alfa = document.getElementsByClassName("radio-alfa");
+      for (var i = 0; i < radios_hadir.length; i++) {
+        if (checkbox.checked) {
+          radios_alfa[i].checked = false;
+          radios_hadir[i].checked = true;
+        } else {
+          radios_alfa[i].checked = true;
+          radios_hadir[i].checked = false;
+        }
+      }
+    }
+  </script>  
+  <!--Main layout-->
+{% include 'object/footer.html' %}

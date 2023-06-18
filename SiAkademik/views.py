@@ -58,6 +58,7 @@ def authenticate(request):
     request.session['username'] = request.POST['username']
     request.session['role'] = result['role']
     request.session['uid'] = str(result['_id'])
+    request.session['uids'] = str(result['_idUser'])
     request.session['pic'] = "profilePic/"+str(result.get('profilePic'))
 
     return redirect('home')
