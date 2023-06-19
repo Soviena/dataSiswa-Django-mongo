@@ -34,12 +34,13 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["localhost","django.belajarpro.online","127.0.0.1","0.0.0.0"]
 
-SECURE_SSL_REDIRECT=True
+SECURE_SSL_REDIRECT=False
 SESSION_COOKIE_SECURE=True
 CSRF_COOKIE_SECURE=True
 # Application definition
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'user',
     'userManagement',
     'absensi',
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
