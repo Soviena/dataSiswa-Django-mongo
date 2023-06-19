@@ -37,6 +37,8 @@ def checkAuthentication(r):
     return False
 
 def index(request):
+    if checkAuthentication(request):
+        return redirect('index')
     cursor = dbname.users.aggregate([
         {
             '$lookup': {
@@ -51,14 +53,20 @@ def index(request):
     return render(request, 'users/index.html',{'data': data})
 
 def addUser(request):
+    if checkAuthentication(request):
+        return redirect('index')
     categoryList = categoryDb.find()
     categoryJson = json.dumps([document for document in categoryDb.find()],cls=JSONEncoder)
     return render(request, 'users/addUser.html',{"categoryList":categoryList,"categoryJSON":categoryJson})
 
 def addCategory(request):
+    if checkAuthentication(request):
+        return redirect('index')
     return render(request, 'users/addCategory.html')
 
 def editCategory(request):
+    if checkAuthentication(request):
+        return redirect('index')
     categoryList = categoryDb.find()
     categoryJson = json.dumps([document for document in categoryDb.find()],cls=JSONEncoder)
     return render(request, 'users/editCategory.html',{"categoryList":categoryList,"categoryJSON":categoryJson})
@@ -84,6 +92,8 @@ def newCategory(request):
     return redirect('addUser')
     
 def editUser(request,user_id):
+    if checkAuthentication(request):
+        return redirect('index')
     categoryList = categoryDb.find()
     categoryJson = json.dumps([document for document in categoryDb.find()],cls=JSONEncoder)    
     user_details = userDetail.find_one({"_id": ObjectId(user_id)})
@@ -159,6 +169,8 @@ def updateUser(request, user_id):
     return redirect('userManagementIndex')
 
 def userFeedback(request):
+    if checkAuthentication(request):
+        return redirect('index')
     cursor = dbname.feedback.aggregate([
         {
             '$lookup': {

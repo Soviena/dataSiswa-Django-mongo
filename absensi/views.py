@@ -28,12 +28,15 @@ def checkAuthentication(r):
 
 
 def index(request):
-
+    if checkAuthentication(request):
+        return redirect('index')
     data = dbAbsensi.find()
     data = [doc for doc in data]
     return render(request, 'absensi/index.html',{'data': data})
 
 def addAbsensi(request):
+    if checkAuthentication(request):
+        return redirect('index')    
     user_details = db_users.find_one({"_id":  ObjectId(request.session['uids'])})
     cursor = dbname.users.aggregate([
         {
@@ -49,6 +52,8 @@ def addAbsensi(request):
     return render(request, 'absensi/absensi.html',{'data': data,'userLogin':user_details,'role':['GURU','STAFF','ADMIN']})
 
 def editAbsensi(request,idAbsensi):
+    if checkAuthentication(request):
+        return redirect('index')
     dataAbsen = dbAbsensi.find_one({"_id": ObjectId(idAbsensi)})
     return render(request, 'absensi/editAbsensi.html',{'data': dataAbsen,'role':['GURU','STAFF','ADMIN']})
 
