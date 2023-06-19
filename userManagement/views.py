@@ -37,8 +37,6 @@ def checkAuthentication(r):
     return False
 
 def index(request):
-    if checkAuthentication(request):
-        return redirect('index')
     cursor = dbname.users.aggregate([
         {
             '$lookup': {
