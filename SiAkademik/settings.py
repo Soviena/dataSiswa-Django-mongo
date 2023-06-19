@@ -30,11 +30,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-bk5xf)6bl-$^0vq4#5tmq#4i$h=+xcqqb8#l8oc95)cc$g5s0q'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["localhost","django.belajarpro.online","127.0.0.1"]
+ALLOWED_HOSTS = ["localhost","django.belajarpro.online","127.0.0.1","0.0.0.0"]
 
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT=True
+SESSION_COOKIE_SECURE=True
+CSRF_COOKIE_SECURE=True
 # Application definition
 
 INSTALLED_APPS = [
@@ -130,12 +132,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 # For Deployment
-STATIC_ROOT = 'static/'
+# STATIC_ROOT = 'static/'
 
 # For Development
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static/'),
-# ]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static/'),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
