@@ -22,15 +22,15 @@ from . import views
 
 urlpatterns = [
     path('',views.index,name='index'),
-    path('home/',views.home,name='home'),
-    path('login/',views.login,name='login'),
-    path('login/authenticate/', views.authenticate,name="auth"),
-    path('logout/', views.logout,name="logout"),
-    path('profile/view/<str:username>/', views.profile, name="profile"),
-    path('profile/edit/', views.profileEdit, name="profileEdit"),
-    path('profile/update/', views.profileUpdate, name="profileUpdate"),
-    path('userManagement/',include('userManagement.urls')),
-    path('user/',include('user.urls')),
-    path('absensi/',include('absensi.urls'))
+    path('home',views.home,name='home'),
+    path('login',views.login,name='login'),
+    path('login/authenticate', views.authenticate,name="auth"),
+    path('logout', views.logout,name="logout"),
+    path('profile/view/<str:username>', views.profile, name="profile"),
+    path('profile/edit', views.profileEdit, name="profileEdit"),
+    path('profile/update', views.profileUpdate, name="profileUpdate"),
+    path('userManagement',include('userManagement.urls')),
+    path('user',include('user.urls')),
+    path('absensi',include('absensi.urls'))
 ]
 urlpatterns += staticfiles_urlpatterns()
