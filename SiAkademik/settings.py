@@ -132,11 +132,11 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 # For Deployment
-# STATIC_ROOT = 'static/'
+STATIC_ROOT = 'static/'
 
 # For Development
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static/'),
+    os.path.join(BASE_DIR, 'assets/'),
 ]
 
 # Default primary key field type
