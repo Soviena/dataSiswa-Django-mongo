@@ -41,7 +41,7 @@
             <i class="fas fa-chart-area fa-fw me-3"></i><span>Feedback</span>
           </a>
           {% endif %}
-          {% if request.session.role == "GURU" %}
+          {% if request.session.role == "ADMIN" or request.session.role == "GURU" %}
           <a href="{% url 'absensiIndex' %}" class="list-group-item list-group-item-action py-2 ripple">
             <i class="fas fa-calendar fa-fw me-3"></i><span>Absensi</span>
           </a>

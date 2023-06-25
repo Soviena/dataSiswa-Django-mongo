@@ -17,17 +17,31 @@
         <tbody>
           {% if data %}
             {% for absensi in data %}
-              <tr>
-                <td>{{ absensi.pertemuan }}</td>
-                <td>{{ absensi.materi }}</td>
-                <td>{{ absensi.waktu_submit }}</td>
-                <td>
-                    <a href="{% url 'editAbsensi' absensi|access_underscore_attr:'_id' %}" class="btn btn-primary">Edit</a>
-                    <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteAbsensi' absensi|access_underscore_attr:'_id' %}`;}">Delete</button>
-                    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="">View Data</button>
-                </td>
-              </tr>
-
+              {% if  request.session.role == "GURU" %}
+                {% if absensi.id_pengajar ==  request.session.uid %}
+                  <tr>
+                    <td>{{ absensi.pertemuan }}</td>
+                    <td>{{ absensi.materi }}</td>
+                    <td>{{ absensi.waktu_submit }}</td>
+                    <td>
+                        <a href="{% url 'editAbsensi' absensi|access_underscore_attr:'_id' %}" class="btn btn-primary">Edit</a>
+                        <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteAbsensi' absensi|access_underscore_attr:'_id' %}`;}">Delete</button>
+                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="">View Data</button>
+                    </td>
+                  </tr>
+                {% endif %}
+              {% else %}
+                <tr>
+                  <td>{{ absensi.pertemuan }}</td>
+                  <td>{{ absensi.materi }}</td>
+                  <td>{{ absensi.waktu_submit }}</td>
+                  <td>
+                      <a href="{% url 'editAbsensi' absensi|access_underscore_attr:'_id' %}" class="btn btn-primary">Edit</a>
+                      <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteAbsensi' absensi|access_underscore_attr:'_id' %}`;}">Delete</button>
+                      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="">View Data</button>
+                  </td>
+                </tr>
+              {% endif %}
             {% endfor %}
           {% endif %}
         </tbody>

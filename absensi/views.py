@@ -20,9 +20,11 @@ db_users = dbname["users"] # Nama Tabel
 dbKelas = dbname['kelas']
 dbAbsensi = dbname['absensi']
 
+access = ["GURU","ADMIN"]
+
 def checkAuthentication(r):
     role =  r.session.get('role')
-    if role != "GURU":
+    if role not in access:
         return True
     return False
 
@@ -61,6 +63,7 @@ def createAbsensi(request):
     data = {
     "mata_pelajaran" : request.POST['mapel'],
     "nama_pengajar" : request.POST['name'],
+    "id_pengajar" : request.session['uid'],
     "pertemuan" : request.POST['pertemuan'],
     "tanggal_kelas" : request.POST['tanggal-kelas'],
     "kelas": request.POST['kelas'],
