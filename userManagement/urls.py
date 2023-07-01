@@ -10,6 +10,7 @@ urlpatterns = [
     path('/users/edit/<str:user_id>/update', views.updateUser, name="updateUser"),
     path('/users/delete/<str:user_id>', views.deleteUser, name="deleteUser"),
     path('/users/feedback',views.userFeedback,name='userFeedback'),
+    path('/users/feedback/<str:feedback_id>/delete',views.deleteFeedback,name='deleteFeedback'),
     path('/users/export/userdata',views.exportCSV,name='exportcsv'),
     path('/users/import/userdata',views.importCSV,name='importcsv'),
     path('/users/import/userdata',views.importCSV,name='importcsv'),

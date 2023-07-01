@@ -11,6 +11,7 @@
               <th>Username</th>
               <th>Feedback</th>
               <th>Tanggal</th>
+              <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -19,6 +20,9 @@
               <td>{{ user.userDetail.0.username }}</td>
               <td>{{ user.feedback }}</td>
               <td>{{ user.date }}</td>
+              <td>
+                <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteFeedback' user|access_underscore_attr:'_id' %}`;}">Delete</button>
+              </td>
             </tr>
           {% endfor %}
         </tbody>

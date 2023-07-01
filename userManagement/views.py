@@ -19,6 +19,8 @@ dbname = my_client['datasiswa'] # Nama Database
 userDetail = dbname["users"] # Nama Tabel
 userLogin = dbname["login"] # Nama Tabel
 categoryDb = dbname["category"]
+feedbackdb = dbname["feedback"]
+
 
 # Custom JSON encoder class to handle ObjectId serialization
 class JSONEncoder(json.JSONEncoder):
@@ -183,6 +185,10 @@ def userFeedback(request):
     ])
     data = [doc for doc in cursor]
     return render(request, 'users/userFeedback.html',{'data': data})
+
+def deleteFeedback(request,feedback_id):
+    feedbackdb.delete_one({"_id": ObjectId(feedback_id)})
+    return redirect('userFeedback')    
 
 def exportCSV(request):
     response = HttpResponse(content_type='text/csv')

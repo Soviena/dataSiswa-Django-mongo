@@ -26,7 +26,7 @@
                     <td>
                         <a href="{% url 'editAbsensi' absensi|access_underscore_attr:'_id' %}" class="btn btn-primary">Edit</a>
                         <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteAbsensi' absensi|access_underscore_attr:'_id' %}`;}">Delete</button>
-                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="">View Data</button>
+                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#data-{{ absensi|access_underscore_attr:'_id' }}">View Data</button>
                     </td>
                   </tr>
                 {% endif %}
@@ -38,7 +38,7 @@
                   <td>
                       <a href="{% url 'editAbsensi' absensi|access_underscore_attr:'_id' %}" class="btn btn-primary">Edit</a>
                       <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteAbsensi' absensi|access_underscore_attr:'_id' %}`;}">Delete</button>
-                      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="">View Data</button>
+                      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#data-{{ absensi|access_underscore_attr:'_id' }}">View Data</button>
                   </td>
                 </tr>
               {% endif %}
@@ -81,6 +81,131 @@
       </div>
     </div>
   </div>
+  {% if data %}
+    {% for absensi in data %}
+      <div class="modal fade" id="data-{{ absensi|access_underscore_attr:'_id' }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Data Absensi</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="container py-2">
+                <div class="row">
+                  <div class="mb-2">
+                    <label for="name" class="col-2 col-form-label fw-bold">Mata Pelajaran</label>
+                    <input disabled type="text" class="col-10 form-control" value="{{ absensi.mata_pelajaran }}" name="mapel">
+                    <input disabled type="hidden" class="col-10 form-control" value="{{ absensi|access_underscore_attr:'_id' }}" name="id">
+                  </div>        
+                  <div class="mb-2">
+                    <label for="name" class="col-2 col-form-label fw-bold">Nama Pengajar</label>
+                    <input disabled type="text" class="col-10 form-control" readonly value="{{ absensi.nama_pengajar }}" name="name">
+                  </div>
+                  <div class="mb-2">
+                    <label for="pertemuan" class="col-2 col-form-label fw-bold">pertemuan ke</label>
+                    <input disabled type="number" class="col-10 form-control" value="{{ absensi.pertemuan }}" name="pertemuan">
+                  </div>        
+                  <div class="mb-2">
+                    <label for="tanggal-kelas" class="col-2 col-form-label fw-bold">Tanggal Pembelajaran</label>
+                    <input disabled type="date" class="col-10 form-control" value="{{ absensi.tanggal_kelas }}" name="tanggal-kelas">
+                  </div>
+                  <div class="mb-2">
+                    <label for="kelas" class="col-2 col-form-label fw-bold">Kelas</label>
+                    <input disabled type="text" class="col-10 form-control" value="{{ absensi.kelas }}" name="kelas" onchange=changeKelas(this.value)>
+                  </div>
+                  <div class="mb-2">
+                    <label for="materi" class="col-2 col-form-label fw-bold">Materi</label>
+                    <input disabled type="text" class="col-10 form-control" value="{{ absensi.materi }}" name="materi">
+                  </div>
+                  <div class="mb-2">
+                    <label for="materi" class="col-2 col-form-label fw-bold">Catatan Tambahan</label>
+                    <textarea disabled class="form-control mb-3 col-10" aria-label="With textarea" name="catatan"s="4">{{ absensi.catatan }}</textarea>
+                  </div>        
+                  <div class="mb-2">
+                    <label for="status" class="col-2 col-form-label fw-bold">Status Absensi</label>
+                    <input disabled type="text" class="col-10 form-control" value="{{ absensi.status }}" readonly name="status">
+                  </div>
+                  <div class="mb-2">
+                    <label for="submit-time" class="col-2 col-form-label fw-bold">Waktu Submit</label>
+                    <input disabled type="text" class="col-10 form-control" readonly value="{{ absensi.waktu_submit }}" name="submit-time">
+                  </div>        
+                  <div class="mb-2">
+                    <label for="update-time" class="col-2 col-form-label fw-bold">Waktu Update</label>
+                    <input disabled type="text" class="col-10 form-control" readonly name="update-time">
+                  </div>        
+                  <div class="mb-2">
+                    <table id="tableSiswa" class="table table">
+                      <thead>
+                        <tr>
+                          <th>No.</th>
+                          <th>NIS</th>
+                          <th>Nama</th>
+                          <th>Kelas</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>          
+                        {% for user in absensi.data %}
+                          <tr> 
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                {{ user.nis }}
+                                <input disabled type="hidden" class="col-10 form-control" name="nis[{{ forloop.counter }}]" value="{{ user.userData.nis }}">
+                            </td>
+                            <td>
+                              {{ user.name }}
+                              <input disabled type="hidden" class="col-10 form-control" name="siswaName[{{ forloop.counter }}]" value="{{ user.name }}">
+                              <input disabled type="hidden" class="col-10 form-control" name="idSiswa[{{ forloop.counter }}]" value="{{ user.id  }}">
+                            </td>
+                            <td>
+                              {{ user.kelas }}
+                              <input disabled type="hidden" class="col-10 form-control" name="kelas[{{ forloop.counter }}]" value="{{ user.userData.kelas }}">
+                            </td>
+                            <td>
+                              <div class="form-group">
+                                <div class="form-check form-check-inline">
+                                  <input disabled class="form-check-input radio" type="radio" name="status-{{ absensi|access_underscore_attr:'_id' }}[{{ forloop.counter }}]" id="hadir-{{ forloop.counter }}" value="hadir" {% if user.status == 'hadir' %} checked {% endif %}>
+                                  <label class="form-check-label" for="hadir-{{ forloop.counter }}">
+                                    HADIR
+                                  </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                  <input disabled class="form-check-input radio" type="radio" name="status-{{ absensi|access_underscore_attr:'_id' }}[{{ forloop.counter }}]" id="izin-{{ forloop.counter }}" value="izin" {% if user.status == 'izin' %} checked {% endif %}>
+                                  <label class="form-check-label" for="izin-{{ forloop.counter }}">
+                                    IZIN
+                                  </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                  <input disabled class="form-check-input radio" type="radio" name="status-{{ absensi|access_underscore_attr:'_id' }}[{{ forloop.counter }}]" id="sakit-{{ forloop.counter }}" value="sakit" {% if user.status == 'sakit' %} checked {% endif %}>
+                                  <label class="form-check-label" for="sakit-{{ forloop.counter }}">
+                                    SAKIT
+                                  </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                  <input disabled class="form-check-input radio" type="radio" name="status-{{ absensi|access_underscore_attr:'_id' }}[{{ forloop.counter }}]" id="alfa-{{ forloop.counter }}" value="alfa" {% if user.status == 'alfa' %} checked {% endif %}>
+                                  <label class="form-check-label" for="alfa-{{ forloop.counter }}">
+                                    ALFA
+                                  </label>
+                                </div>
+                              </div>                  
+                            </td>
+                          </tr>                            
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>                  
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>              
+    {% endfor %}
+  {% endif %}
   <script>
     $(document).ready(function () {
       $('#userTable').DataTable();
