@@ -5,24 +5,28 @@
   <main style="margin-top: 10vh;" class="mx-3">
     <h2 class="my-5">Edit User</h2>
     <div class="container-fluid p-5 shadow">     
-      <form action="{% url 'updateUser' userDetails|access_underscore_attr:'_id' %}" method="POST" enctype="multipart/form-data">
+      <form action="{% url 'updateUser' userDetails %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="mb-2">
-          <label for="name" class="col-2 col-form-label fw-bold">Username</label>
-          <input type="text" class="col-10 form-control" name="username" value="{{userLogin.username}}">
+          <label for="Authentication" class="col-2 col-form-label fw-bold">Data login (opsional)</label>
+          <div class="mb-2">
+            <label for="username" class="col-2 col-form-label fw-bold">Username</label>
+            <input type="text" class="col-10 form-control" name="username" value="{{userDetails.user.username}}">
+          </div>
+          <div class="mb-2">
+            <label for="password" class="col-2 col-form-label fw-bold">Password</label>
+            <input type="password" class="col-10 form-control" name="password">
+          </div>
         </div>
-        <div class="mb-2">
-          <label for="name" class="col-2 col-form-label fw-bold">Password</label>
-          <input type="password" class="col-10 form-control" name="password">
-        </div>
+        <hr>
         <div class="mb-2">
           <label for="name" class="col-2 col-form-label fw-bold">Role</label>
-          <select name="role" class="col-10 form-control" id="role">
+          <select name="role" class="col-10 form-control" id="role" onchange="changeRole(this.value)">
             <option disabled selected value="SISWA">Select Role</option>
-            <option value="ADMIN" {% if userLogin.role == "ADMIN" %} selected {% endif %}>ADMIN</option>
-            <option value="GURU" {% if userLogin.role == "GURU" %} selected {% endif %} >GURU</option>
-            <option value="STAFF" {% if userLogin.role == "STAFF" %} selected {% endif %} >STAFF</option>
-            <option value="SISWA" {% if userLogin.role == "SISWA" %} selected {% endif %} >SISWA</option>
+            <option value="ADMIN" {% if userDetails.role == "ADMIN" %} selected {% endif %}>ADMIN</option>
+            <option value="GURU" {% if userDetails.role == "GURU" %} selected {% endif %} >GURU</option>
+            <option value="STAFF" {% if userDetails.role == "STAFF" %} selected {% endif %} >STAFF</option>
+            <option value="SISWA" {% if userDetails.role == "SISWA" %} selected {% endif %} >SISWA</option>
           </select>
         </div>
         <div class="mb-2">
@@ -33,13 +37,13 @@
           <label for="kelamin" class="col-2 col-form-label fw-bold">Jenis Kelamin</label>
           <div class="col-10">
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="kelamin" id="lakilaki" value="Laki-Laki" {% if userDetails.jenis_kelamin == "Laki-Laki" %} checked {% endif %}>
+              <input class="form-check-input" type="radio" name="kelamin" id="lakilaki" value="L" {% if userDetails.jenis_kelamin == "L" %} checked {% endif %}>
               <label class="form-check-label" for="lakilaki">
                 Laki-Laki
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="kelamin" id="perempuan" value="Perempuan" {% if userDetails.jenis_kelamin == "Perempuan" %} checked {% endif %}>
+              <input class="form-check-input" type="radio" name="kelamin" id="perempuan" value="P" {% if userDetails.jenis_kelamin == "P" %} checked {% endif %}>
               <label class="form-check-label" for="perempuan">
                 Perempuan
               </label>
@@ -52,14 +56,25 @@
         </div>
         <div class="mb-2">
           <label for="tanggal-lahir" class="col-2 col-form-label fw-bold">Tanggal Lahir</label>
-          <input type="date" class="col-10 form-control" name="tanggal-lahir" value="{{ userDetails.tanggal_lahir }}">
+          <input type="date" id="tanggal-lahir" class="col-10 form-control" name="tanggal-lahir" value="">
+          <script>
+            var dateObject = new Date(`{{ userDetails.tanggal_lahir }}`);
+            // Step 2: Extract year, month, and day components
+            var year = dateObject.getFullYear();
+            var month = ('0' + (dateObject.getMonth() + 1)).slice(-2); // Adding 1 because months are zero-based
+            var day = ('0' + dateObject.getDate()).slice(-2);
+
+            // Step 3: Format components into "yyyy/mm/dd" format
+            var formattedDate = year + '-' + month + '-' + day;
+            document.getElementById('tanggal-lahir').value = formattedDate;
+          </script>
         </div>
         <div class="mb-2">
-          <label for="tanggal-lahir" class="col-2 col-form-label fw-bold">Alamat</label>
+          <label for="tempat-lahir" class="col-2 col-form-label fw-bold">Alamat</label>
           <textarea class="form-control mb-3 col-10" aria-label="With textarea" name="alamat"s="4">{{ userDetails.alamat }}</textarea>
         </div>
         <div class="mb-2">
-          <label for="tempat-lahir" class="col-2 col-form-label fw-bold">No. HP</label>
+          <label for="phone" class="col-2 col-form-label fw-bold">No. HP</label>
           <input type="text" class="col-10 form-control" name="phone" value="{{ userDetails.no_hp }}">
         </div>
         <div class="mb-2">
@@ -67,42 +82,10 @@
           <input type="file" class="col-10 form-control" name="profile-pic">
         </div>
 
-        <div class="mb-2">
-          <label for="Kategori" class="col-2 col-form-label fw-bold">Kategori</label>
-          <select name="category" onchange="changeTemplate(this)" class="col-10 form-control" id="category">
-            <option disabled selected >Pilih Kategori</option>
-              {% for category in categoryList %}
-                <option value="{{category.name}}">{{category.name}}</option>                
-              {% endfor %}
-          </select>
-        </div>
-        <a href="{% url 'addCategory' %}" class="btn btn-outline-primary">Tambah Kategori</a>
-        <a href="{% url 'editCategory' %}" class="btn btn-outline-warning">Edit Kategori</a>
+        <div id="roleData">
 
-
-        <div class="mb-2">
-          <label for="Kategori" class="col-2 col-form-label fw-bold">User Data</label>
-          <table id="templateTable" class="table">
-            <thead>
-              <tr>
-                <th>Key</th>
-                <th>Value</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for key,value in userDetails.userData.items %}       
-                <tr>
-                  <td><input type="text" class="form-control" name="key" value="{{key}}" ></td>
-                  <td><input type="text" class="form-control" name="value" value="{{value}}" ></td>
-                  <td><button type="button" class="btn btn-danger" onclick="deleteRow(this)">Delete</button></td>
-                </tr>
-              {% endfor %}      
-            </tbody>
-          </table>
-          <button onclick="addRow()" class="btn btn-outline-primary">Add Row</button>
         </div>
-        
+
         <div class="my-5">
           <input type="submit" class="btn btn-primary float" value="Update User">
           <a href="{% url 'userManagementIndex' %}" class="btn btn-outline-danger">Batalkan</a>
@@ -112,44 +95,88 @@
   </main>
   <script>
     
+    window.addEventListener('load', changeRole(document.getElementById('role').value));
+
     function deleteRow(button) {
       var row = button.parentNode.parentNode; // Get the parent row
       row.parentNode.removeChild(row); // Remove the row from the table
     }
-    
-    function changeTemplate(option) {
-      removeAllRows()
-      categoryJSON = JSON.parse(`{{categoryJSON|escapejs}}`)
-      template = categoryJSON[option.selectedIndex-1]["template"]
-      template.forEach(element => {
-        addRow(element)
-      });
-    }
-    
-    function addRow(key="") { 
-      event.preventDefault();
-      console.log("{{userDetails.userData|escapejs}}")
-      var table = document.getElementById("templateTable");
-      var row = table.insertRow(-1); // Insert row at the last position (-1)
-  
-      var cell1 = row.insertCell(0);
-      var cell2 = row.insertCell(1);
-      var cell3 = row.insertCell(2);
-  
-      cell1.innerHTML = `<td><input type="text" class="form-control" name="key" value="${key}"></td>`;
-      cell2.innerHTML = `<td><input type="text" class="form-control" name="value"></td>`;
-      cell3.innerHTML = '<td><button type="button" class="btn btn-danger" onclick="deleteRow(this)">Delete</button></td>';
-    }
 
-    function removeAllRows() {
-      var table = document.getElementById("templateTable");
-      var rowCount = table.rows.length;
-
-      // Start from the last row and remove each row
-      for (var i = rowCount - 1; i > 0; i--) {
-        table.deleteRow(i);
+    function changeRole(role) {
+      var dataRole = document.getElementById('roleData');
+      switch (role) {
+        case 'GURU':
+          dataRole.innerHTML =
+          `
+          <div class="mb-2">
+            <label for="nip" class="col-2 col-form-label fw-bold">NIP</label>
+            <input type="text" class="col-10 form-control" name="nip" value="{{userDetails.guru.nip}}">
+          </div>
+          <div class="mb-2">
+            <label for="bidang_studi" class="col-2 col-form-label fw-bold">Bidang Studi</label>
+            <input type="text" class="col-10 form-control" name="bidang_studi" value="{{userDetails.guru.bidang_studi}}">
+          </div>
+          `
+          break;
+      
+        case 'SISWA':
+          dataRole.innerHTML =
+          `
+            <div class="mb-5 mt-5">
+              <label for="kelas" class="col-2 col-form-label fw-bold">Pilih Kelas</label>
+              <select required name="kelas" class="col-10 form-control" id="kelasPilih">
+                {%for kelas in kelasAll%}
+                  <option {% if userDetails.siswa.id_kelas == kelas %} selected {% endif %} value="{{kelas.unique_id}}">{{kelas.tingkat}}{{kelas.grup}}</option>
+                {%endfor%}
+              </select>
+              <div class='row'>
+                <div class="col">
+                  <label for="tingkat" class="col-4 col-form-label fw-bold">Tingkat kelas</label>
+                  <input type="number" class="col-10 form-control" id='tingkatKelas'>
+                </div>
+                <div class="col">
+                  <label for="grup" class="col-4 col-form-label fw-bold">Grup kelas</label>
+                  <input type="text" class="col-10 form-control" id='grupKelas'>
+                </div>
+                <div class="col">
+                  <div class='row'>
+                    <label for="grup" class="col-4 col-form-label fw-bold">Tambah</label>
+                  </div>
+                  <div class='row'>
+                    <button type='button' class="btn btn-primary" onclick="newKelas()">Tambah Kelas</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <label for="nis" class="col-2 col-form-label fw-bold">NIS</label>
+              <input type="text" class="col-10 form-control" name="nis" value={{ userDetails.siswa.nis }}>
+            </div>
+            <div class="mb-2">
+              <label for="nisn" class="col-2 col-form-label fw-bold">NISN</label>
+              <input type="text" class="col-10 form-control" name="nisn" value={{ userDetails.siswa.nisn }}>
+            </div>
+            <div class="mb-2">
+              <label for="angkatan" class="col-2 col-form-label fw-bold">Angkatan</label>
+              <input type="text" class="col-10 form-control" name="angkatan" value={{ userDetails.siswa.angkatan }}>
+            </div>
+          `  
+          break;
+        default:
+          dataRole.innerHTML = ``;
+          break;
       }
-    }    
+    }
+    function newKelas() {
+      let tingkat = document.getElementById('tingkatKelas').value;
+      let grup = document.getElementById('grupKelas').value;
+      let selectKelas = document.getElementById('kelasPilih');
+      let newOption = document.createElement('option');
+      newOption.value = tingkat+"-"+grup;
+      newOption.textContent = tingkat+grup;
+      selectKelas.appendChild(newOption);
+      return;
+    }
   </script>  
   <!--Main layout-->
 {% include 'object/footer.html' %}

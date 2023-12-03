@@ -18,17 +18,17 @@
         <tbody>
           {% for user in data %}
             <tr>
-              <td>{{ user.userInfo.0.username }}</td>
+              <td>{{ user.user.username }}</td>
               <td>{{ user.nama_Lengkap }}</td>
-              <td>{{ user.userInfo.0.role }}</td>
+              <td>{{ user.role }}</td>
               <td>{{ user.no_hp }}</td>
               <td>
-                  <a href="{% url 'editUser' user|access_underscore_attr:'_id' %}" class="btn btn-primary">Edit</a>
-                  <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteUser' user|access_underscore_attr:'_id' %}`;}">Delete</button>
-                  <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#data-{{ user|access_underscore_attr:'_id' }}">View Data</button>
+                  <a href="{% url 'editUser' user%}" class="btn btn-primary">Edit</a>
+                  <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteUser' user %}`;}">Delete</button>
+                  <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#data-{{ user }}">View Data</button>
               </td>
             </tr>
-            <div class="modal fade" id="data-{{ user|access_underscore_attr:'_id' }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="data-{{ user }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -43,19 +43,15 @@
                           <div class="card mb-4">
                             <h4 class="my-2">My Profile</h4>
                             <div class="card-body text-center">
-                              <img {% if user.userInfo|length > 0 %} 
-                                      {% if 'profilePic' not in user.userInfo.0 %} 
-                                        src="{% static 'profilePic/tes.jpeg' %}" 
+                              <img    {% if user.pic == 'None' %} 
+                                        src="{% static 'profilePic/default.jpeg' %}" 
                                       {% else %} 
-                                        src='{% static "profilePic/"|add:user.userInfo.0.profilePic %}' 
+                                        src='{% static "profilePic/"|add:user.pic %}' 
                                       {% endif%} 
-                                    {%else%} 
-                                      src="{% static 'profilePic/tes.jpeg' %}"
-                                    {% endif%} 
                                     alt="avatar"
                                 class="rounded-circle mt-2" style="width:22vh;height:22vh; object-fit: cover; object-position: 25% 25%;">
-                              <h5 class="my-3">{{user.userInfo.0.username}}</h5>
-                              <p class="text-muted mb-1">{{user.userInfo.0.role}}</p>
+                              <h5 class="my-3">{{user.user.username}}</h5>
+                              <p class="text-muted mb-1">{{user.role}}</p>
                             </div>
                           </div>
                           
@@ -77,7 +73,13 @@
                                   <p class="mb-0">Jenis kelamin</p>
                                 </div>
                                 <div class="col-sm-9">
-                                  <p class="text-muted mb-0">{{user.jenis_kelamin}}</p>
+                                  <p class="text-muted mb-0">
+                                    {%if user.jenis_kelamin == 'L'%}
+                                      Laki-Laki
+                                    {%else%}
+                                      Perempuan
+                                    {%endif%}
+                                  </p>
                                 </div>
                               </div>
                               <hr>
@@ -116,18 +118,62 @@
                                   <p class="text-muted mb-0">{{user.alamat}}</p>
                                 </div>
                               </div>
-                              {% if user.userData %}
-                                {% for key,value in user.userData.items%}
-                                  <hr>
-                                  <div class="row">
-                                    <div class="col-sm-3">
-                                      <p class="mb-0">{{key}}</p>
-                                    </div>
-                                    <div class="col-sm-9">
-                                      <p class="text-muted mb-0">{{value}}</p>
-                                    </div>
+                              {% if user.role == 'GURU' %}
+                                <hr>
+                                <div class="row">
+                                  <div class="col-sm-3">
+                                    <p class="mb-0">NIP</p>
                                   </div>
-                                {% endfor %}
+                                  <div class="col-sm-9">
+                                    <p class="text-muted mb-0">{{user.guru.nip}}</p>
+                                  </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                  <div class="col-sm-3">
+                                    <p class="mb-0">Bidang Studi</p>
+                                  </div>
+                                  <div class="col-sm-9">
+                                    <p class="text-muted mb-0">{{user.guru.bidang_studi}}</p>
+                                  </div>
+                                </div>                                
+                              {% elif user.role == 'SISWA' %}
+                                <hr>
+                                <div class="row">
+                                  <div class="col-sm-3">
+                                    <p class="mb-0">Kelas</p>
+                                  </div>
+                                  <div class="col-sm-9">
+                                    <p class="text-muted mb-0">{{user.siswa.id_kelas}}</p>
+                                  </div>
+                                </div>                                   
+                                <hr>
+                                <div class="row">
+                                  <div class="col-sm-3">
+                                    <p class="mb-0">nis</p>
+                                  </div>
+                                  <div class="col-sm-9">
+                                    <p class="text-muted mb-0">{{user.siswa.nis}}</p>
+                                  </div>
+                                </div>     
+                                <hr>
+                                <div class="row">
+                                  <div class="col-sm-3">
+                                    <p class="mb-0">nisn</p>
+                                  </div>
+                                  <div class="col-sm-9">
+                                    <p class="text-muted mb-0">{{user.siswa.nisn}}</p>
+                                  </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                  <div class="col-sm-3">
+                                    <p class="mb-0">Angkatan</p>
+                                  </div>
+                                  <div class="col-sm-9">
+                                    <p class="text-muted mb-0">{{user.siswa.angkatan}}</p>
+                                  </div>
+                                </div>                                                                                        
                               {% endif %}
                             </div>
                           </div>

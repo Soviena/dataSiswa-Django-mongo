@@ -18,15 +18,15 @@
           {% if data %}
             {% for absensi in data %}
               {% if  request.session.role == "GURU" %}
-                {% if absensi.id_pengajar ==  request.session.uid %}
+                {% if absensi.id_user.username ==  request.user.username %}
                   <tr>
                     <td>{{ absensi.pertemuan }}</td>
                     <td>{{ absensi.materi }}</td>
-                    <td>{{ absensi.waktu_submit }}</td>
+                    <td>{{ absensi.created_at }}</td>
                     <td>
-                        <a href="{% url 'editAbsensi' absensi|access_underscore_attr:'_id' %}" class="btn btn-primary">Edit</a>
-                        <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteAbsensi' absensi|access_underscore_attr:'_id' %}`;}">Delete</button>
-                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#data-{{ absensi|access_underscore_attr:'_id' }}">View Data</button>
+                        <a href="{% url 'editAbsensi' absensi.id %}" class="btn btn-primary">Edit</a>
+                        <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteAbsensi' absensi.id %}`;}">Delete</button>
+                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#data-{{ absensi.id }}">View Data</button>
                     </td>
                   </tr>
                 {% endif %}
@@ -34,11 +34,11 @@
                 <tr>
                   <td>{{ absensi.pertemuan }}</td>
                   <td>{{ absensi.materi }}</td>
-                  <td>{{ absensi.waktu_submit }}</td>
+                  <td>{{ absensi.created_at }}</td>
                   <td>
-                      <a href="{% url 'editAbsensi' absensi|access_underscore_attr:'_id' %}" class="btn btn-primary">Edit</a>
-                      <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteAbsensi' absensi|access_underscore_attr:'_id' %}`;}">Delete</button>
-                      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#data-{{ absensi|access_underscore_attr:'_id' }}">View Data</button>
+                      <a href="{% url 'editAbsensi' absensi.id %}" class="btn btn-primary">Edit</a>
+                      <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteAbsensi' absensi.id %}`;}">Delete</button>
+                      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#data-{{ absensi.id }}">View Data</button>
                   </td>
                 </tr>
               {% endif %}
@@ -83,7 +83,7 @@
   </div>
   {% if data %}
     {% for absensi in data %}
-      <div class="modal fade" id="data-{{ absensi|access_underscore_attr:'_id' }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal fade" id="data-{{ absensi.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
           <div class="modal-content">
             <div class="modal-header">
@@ -95,12 +95,12 @@
                 <div class="row">
                   <div class="mb-2">
                     <label for="name" class="col-2 col-form-label fw-bold">Mata Pelajaran</label>
-                    <input disabled type="text" class="col-10 form-control" value="{{ absensi.mata_pelajaran }}" name="mapel">
-                    <input disabled type="hidden" class="col-10 form-control" value="{{ absensi|access_underscore_attr:'_id' }}" name="id">
+                    <input disabled type="text" class="col-10 form-control" value="{{ absensi.id_pelajaran.nama }}" name="mapel">
+                    <input disabled type="hidden" class="col-10 form-control" value="{{ absensi.id }}" name="id">
                   </div>        
                   <div class="mb-2">
                     <label for="name" class="col-2 col-form-label fw-bold">Nama Pengajar</label>
-                    <input disabled type="text" class="col-10 form-control" readonly value="{{ absensi.nama_pengajar }}" name="name">
+                    <input disabled type="text" class="col-10 form-control" readonly value="{{ absensi.id_user.username }}" name="name">
                   </div>
                   <div class="mb-2">
                     <label for="pertemuan" class="col-2 col-form-label fw-bold">pertemuan ke</label>
@@ -108,11 +108,11 @@
                   </div>        
                   <div class="mb-2">
                     <label for="tanggal-kelas" class="col-2 col-form-label fw-bold">Tanggal Pembelajaran</label>
-                    <input disabled type="date" class="col-10 form-control" value="{{ absensi.tanggal_kelas }}" name="tanggal-kelas">
+                    <input disabled type="text" class="col-10 form-control" value="{{ absensi.tanggal }}" name="tanggal-kelas">
                   </div>
                   <div class="mb-2">
                     <label for="kelas" class="col-2 col-form-label fw-bold">Kelas</label>
-                    <input disabled type="text" class="col-10 form-control" value="{{ absensi.kelas }}" name="kelas" onchange=changeKelas(this.value)>
+                    <input disabled type="text" class="col-10 form-control" value="{{ absensi.id_kelas }}" name="kelas" onchange=changeKelas(this.value)>
                   </div>
                   <div class="mb-2">
                     <label for="materi" class="col-2 col-form-label fw-bold">Materi</label>
@@ -128,7 +128,7 @@
                   </div>
                   <div class="mb-2">
                     <label for="submit-time" class="col-2 col-form-label fw-bold">Waktu Submit</label>
-                    <input disabled type="text" class="col-10 form-control" readonly value="{{ absensi.waktu_submit }}" name="submit-time">
+                    <input disabled type="text" class="col-10 form-control" readonly value="{{ absensi.created_at }}" name="submit-time">
                   </div>        
                   <div class="mb-2">
                     <label for="update-time" class="col-2 col-form-label fw-bold">Waktu Update</label>
@@ -146,44 +146,44 @@
                         </tr>
                       </thead>
                       <tbody>          
-                        {% for user in absensi.data %}
+                        {% for user in absensi.siswa_absensi_list %}
                           <tr> 
                             <td>{{ forloop.counter }}</td>
                             <td>
-                                {{ user.nis }}
-                                <input disabled type="hidden" class="col-10 form-control" name="nis[{{ forloop.counter }}]" value="{{ user.userData.nis }}">
+                                {{ user.id_siswa.nis }}
+                                <input disabled type="hidden" class="col-10 form-control" name="nis[{{ forloop.counter }}]" value="{{ user.id_siswa.nis }}">
                             </td>
                             <td>
-                              {{ user.name }}
-                              <input disabled type="hidden" class="col-10 form-control" name="siswaName[{{ forloop.counter }}]" value="{{ user.name }}">
-                              <input disabled type="hidden" class="col-10 form-control" name="idSiswa[{{ forloop.counter }}]" value="{{ user.id  }}">
+                              {{ user.id_siswa.user_profile.nama_Lengkap }}
+                              <input disabled type="hidden" class="col-10 form-control" name="siswaName[{{ forloop.counter }}]" value="{{ user.id_siswa.user_profile.nama_Lengkap }}">
+                              <input disabled type="hidden" class="col-10 form-control" name="idSiswa[{{ forloop.counter }}]" value="{{ user.id_siswa.id  }}">
                             </td>
                             <td>
-                              {{ user.kelas }}
-                              <input disabled type="hidden" class="col-10 form-control" name="kelas[{{ forloop.counter }}]" value="{{ user.userData.kelas }}">
+                              {{ user.id_siswa.id_kelas }}
+                              <input disabled type="hidden" class="col-10 form-control" name="kelas[{{ forloop.counter }}]" value="{{ user.id_siswa.id_kelas.unique_id }}">
                             </td>
                             <td>
                               <div class="form-group">
                                 <div class="form-check form-check-inline">
-                                  <input disabled class="form-check-input radio" type="radio" name="status-{{ absensi|access_underscore_attr:'_id' }}[{{ forloop.counter }}]" id="hadir-{{ forloop.counter }}" value="hadir" {% if user.status == 'hadir' %} checked {% endif %}>
+                                  <input disabled class="form-check-input radio" type="radio" name="status-{{ absensi.id }}[{{ forloop.counter }}]" id="hadir-{{ forloop.counter }}" value="hadir" {% if user.keterangan == 'hadir' %} checked {% endif %}>
                                   <label class="form-check-label" for="hadir-{{ forloop.counter }}">
                                     HADIR
                                   </label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                  <input disabled class="form-check-input radio" type="radio" name="status-{{ absensi|access_underscore_attr:'_id' }}[{{ forloop.counter }}]" id="izin-{{ forloop.counter }}" value="izin" {% if user.status == 'izin' %} checked {% endif %}>
+                                  <input disabled class="form-check-input radio" type="radio" name="status-{{ absensi.id }}[{{ forloop.counter }}]" id="izin-{{ forloop.counter }}" value="izin" {% if user.keterangan == 'izin' %} checked {% endif %}>
                                   <label class="form-check-label" for="izin-{{ forloop.counter }}">
                                     IZIN
                                   </label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                  <input disabled class="form-check-input radio" type="radio" name="status-{{ absensi|access_underscore_attr:'_id' }}[{{ forloop.counter }}]" id="sakit-{{ forloop.counter }}" value="sakit" {% if user.status == 'sakit' %} checked {% endif %}>
+                                  <input disabled class="form-check-input radio" type="radio" name="status-{{ absensi.id }}[{{ forloop.counter }}]" id="sakit-{{ forloop.counter }}" value="sakit" {% if user.keterangan == 'sakit' %} checked {% endif %}>
                                   <label class="form-check-label" for="sakit-{{ forloop.counter }}">
                                     SAKIT
                                   </label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                  <input disabled class="form-check-input radio" type="radio" name="status-{{ absensi|access_underscore_attr:'_id' }}[{{ forloop.counter }}]" id="alfa-{{ forloop.counter }}" value="alfa" {% if user.status == 'alfa' %} checked {% endif %}>
+                                  <input disabled class="form-check-input radio" type="radio" name="status-{{ absensi.id }}[{{ forloop.counter }}]" id="alfa-{{ forloop.counter }}" value="alfa" {% if user.keterangan == 'alfa' %} checked {% endif %}>
                                   <label class="form-check-label" for="alfa-{{ forloop.counter }}">
                                     ALFA
                                   </label>

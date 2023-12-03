@@ -7,6 +7,7 @@
     <div class="container-fluid p-5 shadow">     
       <form action="{% url 'updateAbsensi' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
+        <input type="hidden" class="col-10 form-control" value="{{ data.id }}" name="id">
         <!-- <div class="mb-2">
           <label for="mata pelajaran" class="col-2 col-form-label fw-bold">Mata Pelajaran</label>
           <select name="mapel" class="col-10 form-control" id="mapel">
@@ -14,14 +15,36 @@
             <option value="ADMIN">ADMIN</option>
           </select>
         </div> -->
-        <div class="mb-2">
-          <label for="name" class="col-2 col-form-label fw-bold">Mata Pelajaran</label>
-          <input type="text" class="col-10 form-control" value="{{ data.mata_pelajaran }}" name="mapel">
-          <input type="hidden" class="col-10 form-control" value="{{ data|access_underscore_attr:'_id' }}" name="id">
-        </div>        
+        <div class="mb-5 mt-5">
+          <label for="matpel" class="col-2 col-form-label fw-bold">Mata Pelajaran</label>
+          <select required name="matpel" class="col-10 form-control" id="matpelPilih">
+            <option disabled value="None">Kosong</option>
+            {%for matpel in allMatpel%}
+              <option {% if data.id_pelajaran.id == matpel.id_pelajaran.id %} selected {% endif %} value="{{matpel.singkatan}}-{{matpel.nama}}">{{matpel.singkatan}} - {{matpel.nama}}</option>
+            {%endfor%}
+          </select>
+          <div class='row'>
+            <div class="col">
+              <label for="matpel_nama" class="col-4 col-form-label fw-bold">Nama Matpel</label>
+              <input type="text" class="col-10 form-control" id='matpel_nama'>
+            </div>
+            <div class="col">
+              <label for="matpel_singkatan" class="col-4 col-form-label fw-bold">Singkatan</label>
+              <input type="text" class="col-10 form-control" id='matpel_singkatan'>
+            </div>
+            <div class="col">
+              <div class='row'>
+                <label for="tambah" class="col-4 col-form-label fw-bold">Tambah</label>
+              </div>
+              <div class='row'>
+                <button type='button' class="btn btn-primary" onclick="newMatpel()">Tambah Mata Pelajaran</button>
+              </div>
+            </div>
+          </div>
+        </div>      
         <div class="mb-2">
           <label for="name" class="col-2 col-form-label fw-bold">Nama Pengajar</label>
-          <input type="text" class="col-10 form-control" readonly value="{{ data.nama_pengajar }}" name="name">
+          <input type="text" class="col-10 form-control" readonly value="{{ data.id_user.username }}" name="name">
         </div>
         <div class="mb-2">
           <label for="pertemuan" class="col-2 col-form-label fw-bold">pertemuan ke</label>
@@ -29,11 +52,22 @@
         </div>        
         <div class="mb-2">
           <label for="tanggal-kelas" class="col-2 col-form-label fw-bold">Tanggal Pembelajaran</label>
-          <input type="date" class="col-10 form-control" value="{{ data.tanggal_kelas }}" name="tanggal-kelas">
+          <input type="date" class="col-10 form-control" value="" id='tanggal-kelas' name="tanggal-kelas">
+          <script>
+            var dateObject = new Date(`{{ data.tanggal }}`);
+            // Step 2: Extract year, month, and day components
+            var year = dateObject.getFullYear();
+            var month = ('0' + (dateObject.getMonth() + 1)).slice(-2); // Adding 1 because months are zero-based
+            var day = ('0' + dateObject.getDate()).slice(-2);
+
+            // Step 3: Format components into "yyyy/mm/dd" format
+            var formattedDate = year + '-' + month + '-' + day;
+            document.getElementById('tanggal-kelas').value = formattedDate;
+          </script>
         </div>
         <div class="mb-2">
           <label for="kelas" class="col-2 col-form-label fw-bold">Kelas</label>
-          <input type="text" class="col-10 form-control" value="{{ data.kelas }}" name="kelas" onchange=changeKelas(this.value)>
+          <input type="text" disabled class="col-10 form-control" value="{{ data.id_kelas }}" name="kelas" onchange=changeKelas(this.value)>
         </div>
         <div class="mb-2">
           <label for="materi" class="col-2 col-form-label fw-bold">Materi</label>
@@ -49,11 +83,11 @@
         </div>
         <div class="mb-2">
           <label for="submit-time" class="col-2 col-form-label fw-bold">Waktu Submit</label>
-          <input type="text" class="col-10 form-control" readonly value="{{ data.waktu_submit }}" name="submit-time">
+          <input type="text" class="col-10 form-control" readonly value="{{ data.created_at }}" name="submit-time">
         </div>        
         <div class="mb-2">
           <label for="update-time" class="col-2 col-form-label fw-bold">Waktu Update</label>
-          <input type="text" class="col-10 form-control" readonly name="update-time">
+          <input type="text" class="col-10 form-control" readonly name="update-time" value="{{ data.updated_at }}">
         </div>        
         <div class="mb-2">
           <label for="picture" class="col-2 col-form-label fw-bold">Upload Foto</label>
@@ -81,44 +115,44 @@
             </tr>
           </thead>
           <tbody>          
-            {% for user in data.data %}
+            {% for user in data.siswa_absensi_list %}
               <tr> 
                 <td>{{ forloop.counter }}</td>
                 <td>
-                    {{ user.nis }}
-                    <input type="hidden" class="col-10 form-control" name="nis[{{ forloop.counter }}]" value="{{ user.userData.nis }}">
+                    {{ user.id_siswa.nis }}
+                    <input type="hidden" class="col-10 form-control" name="nis[{{ forloop.counter }}]" value="{{ user.id_siswa.nis }}">
                 </td>
                 <td>
-                  {{ user.name }}
-                  <input type="hidden" class="col-10 form-control" name="siswaName[{{ forloop.counter }}]" value="{{ user.name }}">
-                  <input type="hidden" class="col-10 form-control" name="idSiswa[{{ forloop.counter }}]" value="{{ user.id  }}">
+                  {{ user.id_siswa.user_profile.nama_Lengkap }}
+                  <input type="hidden" class="col-10 form-control" name="siswaName[{{ forloop.counter }}]" value="{{ user.id_siswa.user_profile.nama_Lengkap }}">
+                  <input type="hidden" class="col-10 form-control" name="idSiswa[{{ forloop.counter }}]" value="{{ user.id_siswa.id  }}">
                 </td>
                 <td>
-                  {{ user.kelas }}
-                  <input type="hidden" class="col-10 form-control" name="kelas[{{ forloop.counter }}]" value="{{ user.userData.kelas }}">
+                  {{ user.id_siswa.id_kelas }}
+                  <input type="hidden" class="col-10 form-control" name="kelas[{{ forloop.counter }}]" value="{{ user.id_siswa.id_kelas.unique_id }}">
                 </td>
                 <td>
                   <div class="form-group">
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input radio-hadir" type="radio" name="status[{{ forloop.counter }}]" id="hadir-{{ forloop.counter }}" value="hadir" {% if user.status == 'hadir' %} checked {% endif %}>
+                      <input class="form-check-input radio-hadir" type="radio" name="status[{{ forloop.counter }}]" id="hadir-{{ forloop.counter }}" value="hadir" {% if user.keterangan == 'hadir' %} checked {% endif %}>
                       <label class="form-check-label" for="hadir-{{ forloop.counter }}">
                         HADIR
                       </label>
                     </div>
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input radio" type="radio" name="status[{{ forloop.counter }}]" id="izin-{{ forloop.counter }}" value="izin" {% if user.status == 'izin' %} checked {% endif %}>
+                      <input class="form-check-input radio" type="radio" name="status[{{ forloop.counter }}]" id="izin-{{ forloop.counter }}" value="izin" {% if user.keterangan == 'izin' %} checked {% endif %}>
                       <label class="form-check-label" for="izin-{{ forloop.counter }}">
                         IZIN
                       </label>
                     </div>
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input radio" type="radio" name="status[{{ forloop.counter }}]" id="sakit-{{ forloop.counter }}" value="sakit" {% if user.status == 'sakit' %} checked {% endif %}>
+                      <input class="form-check-input radio" type="radio" name="status[{{ forloop.counter }}]" id="sakit-{{ forloop.counter }}" value="sakit" {% if user.keterangan == 'sakit' %} checked {% endif %}>
                       <label class="form-check-label" for="sakit-{{ forloop.counter }}">
                         SAKIT
                       </label>
                     </div>
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input radio-alfa" type="radio" name="status[{{ forloop.counter }}]" id="alfa-{{ forloop.counter }}" value="alfa" {% if user.status == 'alfa' %} checked {% endif %}>
+                      <input class="form-check-input radio-alfa" type="radio" name="status[{{ forloop.counter }}]" id="alfa-{{ forloop.counter }}" value="alfa" {% if user.keterangan == 'alfa' %} checked {% endif %}>
                       <label class="form-check-label" for="alfa-{{ forloop.counter }}">
                         ALFA
                       </label>

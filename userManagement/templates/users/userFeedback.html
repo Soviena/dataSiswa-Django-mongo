@@ -15,13 +15,13 @@
             </tr>
         </thead>
         <tbody>
-          {% for user in data %}
+          {% for feedback in data %}
             <tr>
-              <td>{{ user.userDetail.0.username }}</td>
-              <td>{{ user.feedback }}</td>
-              <td>{{ user.date }}</td>
+              <td>{{ feedback.user_profile.user.username }}</td>
+              <td>{{ feedback.feedback }}</td>
+              <td>{{ feedback.date }}</td>
               <td>
-                <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteFeedback' user|access_underscore_attr:'_id' %}`;}">Delete</button>
+                <button class="btn btn-danger" onclick="if (confirm('yakin ingin menghapus ?')){ window.location.href = `{% url 'deleteFeedback' feedback.id %}`;}">Delete</button>
               </td>
             </tr>
           {% endfor %}

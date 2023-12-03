@@ -10,10 +10,10 @@
         <div class="card mb-4">
           <h4 class="my-2">My Profile</h4>
           <div class="card-body text-center">
-            <img {% if userLogin.profilePic == "profilePic/None"  %} src="{% static 'profilePic/tes.jpeg' %}" {% else %} src='{% static userLogin.profilePic %}' {% endif%} alt="avatar"
+            <img {% if userDetails.pic == ""  %} src="{% static 'profilePic/default.jpeg' %}" {% else %} src='{% static userDetails.profilePic %}' {% endif%} alt="avatar"
               class="rounded-circle mt-2" style="width:22vh;height:22vh; object-fit: cover; object-position: 25% 25%;">
             <h5 class="my-3">{{userLogin.username}}</h5>
-            <p class="text-muted mb-1">{{userLogin.role}}</p>
+            <p class="text-muted mb-1">{{userDetails.role}}</p>
           </div>
         </div>
         
@@ -35,7 +35,7 @@
                 <p class="mb-0">Jenis kelamin</p>
               </div>
               <div class="col-sm-9">
-                <p class="text-muted mb-0">{{userDetails.jenis_kelamin}}</p>
+                <p class="text-muted mb-0">{% if userDetails.jenis_kelamin == "L"  %} Laki-Laki {% else %} Perempuan {% endif%}</p>
               </div>
             </div>
             <hr>

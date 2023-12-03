@@ -14,10 +14,33 @@
             <option value="ADMIN">ADMIN</option>
           </select>
         </div> -->
-        <div class="mb-2">
-          <label for="name" class="col-2 col-form-label fw-bold">Mata Pelajaran</label>
-          <input type="text" class="col-10 form-control" value="" name="mapel">
-        </div>        
+        <div class="mb-5 mt-5">
+          <label for="matpel" class="col-2 col-form-label fw-bold">Mata Pelajaran</label>
+          <select required name="matpel" class="col-10 form-control" id="matpelPilih">
+            <option disabled selected value="None">Kosong</option>
+            {%for matpel in allMatpel%}
+              <option value="{{matpel.singkatan}}-{{matpel.nama}}">{{matpel.singkatan}} - {{matpel.nama}}</option>
+            {%endfor%}
+          </select>
+          <div class='row'>
+            <div class="col">
+              <label for="matpel_nama" class="col-4 col-form-label fw-bold">Nama Matpel</label>
+              <input type="text" class="col-10 form-control" id='matpel_nama'>
+            </div>
+            <div class="col">
+              <label for="matpel_singkatan" class="col-4 col-form-label fw-bold">Singkatan</label>
+              <input type="text" class="col-10 form-control" id='matpel_singkatan'>
+            </div>
+            <div class="col">
+              <div class='row'>
+                <label for="tambah" class="col-4 col-form-label fw-bold">Tambah</label>
+              </div>
+              <div class='row'>
+                <button type='button' class="btn btn-primary" onclick="newMatpel()">Tambah Mata Pelajaran</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="mb-2">
           <label for="name" class="col-2 col-form-label fw-bold">Nama Pengajar</label>
           <input type="text" class="col-10 form-control" readonly value="{{userLogin.nama_Lengkap}}" name="name">
@@ -30,9 +53,14 @@
           <label for="tanggal-kelas" class="col-2 col-form-label fw-bold">Tanggal Pembelajaran</label>
           <input type="date" class="col-10 form-control" name="tanggal-kelas">
         </div>
-        <div class="mb-2">
-          <label for="kelas" class="col-2 col-form-label fw-bold">Kelas</label>
-          <input type="text" class="col-10 form-control" value="" name="kelas" onchange=changeKelas(this.value)>
+        <div class="mb-5 mt-5">
+          <label for="kelas" class="col-2 col-form-label fw-bold">Pilih Kelas</label>
+          <select required name="kelas" class="col-10 form-control" id="kelasPilih" onchange="changeKelas(this.value.replace('-',''))">
+            <option disabled selected value="None">Kosong</option>
+            {%for kelas in allKelas%}
+              <option value="{{kelas.unique_id}}">{{kelas.tingkat}}{{kelas.grup}}</option>
+            {%endfor%}
+          </select>
         </div>
         <div class="mb-2">
           <label for="materi" class="col-2 col-form-label fw-bold">Materi</label>
@@ -79,30 +107,22 @@
               </th>
             </tr>
           </thead>
-          <tbody>          
+          <tbody id="tableSiswaBody">
             {% for user in data %}
-              {% if user.userInfo and user.userInfo.0.role in role %}                                                         
-              {% else %}
               <tr> 
                 <td>{{ forloop.counter }}</td>
                 <td>
-                  {% if user.userData %}
-                    {{ user.userData.nis }}
-                    <input type="hidden" class="col-10 form-control" name="nis[{{ forloop.counter }}]" value="{{ user.userData.nis }}">
-                  {% endif %}
-
+                    {{ user.nis }}
+                    <input type="hidden" class="col-10 form-control" name="nis[{{ forloop.counter }}]" value="{{ user.nis }}">
                 </td>
                 <td>
-                  {{ user.nama_Lengkap }}
-                  <input type="hidden" class="col-10 form-control" name="siswaName[{{ forloop.counter }}]" value="{{ user.nama_Lengkap }}">
-                  <input type="hidden" class="col-10 form-control" name="idSiswa[{{ forloop.counter }}]" value="{{  user|access_underscore_attr:'_id' }}">
+                  {{ user.user_profile.nama_Lengkap }}
+                  <input type="hidden" class="col-10 form-control" name="siswaName[{{ forloop.counter }}]" value="{{ user.user_profile.nama_Lengkap }}">
+                  <input type="hidden" class="col-10 form-control" name="idSiswa[{{ forloop.counter }}]" value="{{  user.id }}">
                 </td>
                 <td>
-                  {% if user.userData %}
-                    {{ user.userData.kelas }}
-                    <input type="hidden" class="col-10 form-control" name="kelas[{{ forloop.counter }}]" value="{{ user.userData.kelas }}">
-                  {% endif %}
-                </td>
+                    {{ user.id_kelas }}
+                    <input type="hidden" class="col-10 form-control" name="kelas[{{ forloop.counter }}]" value="{{ user.userData.kelas }}">                </td>
                 <td>
                   <div class="form-group">
                     <div class="form-check form-check-inline">
@@ -132,7 +152,6 @@
                   </div>                  
                 </td>
               </tr>                       
-              {% endif %}              
             {% endfor %}
           </tbody>
         </table>
@@ -163,6 +182,17 @@
           radios_hadir[i].checked = false;
         }
       }
+    }
+
+    function newMatpel() {
+      let nama = document.getElementById('matpel_nama').value;
+      let singkatan = document.getElementById('matpel_singkatan').value;
+      let selectKelas = document.getElementById('matpelPilih');
+      let newOption = document.createElement('option');
+      newOption.value = singkatan+'-'+nama;
+      newOption.textContent = singkatan+' - '+nama;
+      selectKelas.appendChild(newOption);
+      return;
     }
   </script>  
   <!--Main layout-->
