@@ -33,5 +33,7 @@ urlpatterns = [
     path('user',include('user.urls')),
     path('absensi',include('absensi.urls')),
     path('admin/', admin.site.urls),
+    path('penilaian', include('penilaian.urls')),
+
 ]
 urlpatterns += staticfiles_urlpatterns()

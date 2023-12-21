@@ -19,10 +19,10 @@
           <select required name="matpel" class="col-10 form-control" id="matpelPilih">
             <option disabled selected value="None">Kosong</option>
             {%for matpel in allMatpel%}
-              <option value="{{matpel.singkatan}}-{{matpel.nama}}">{{matpel.singkatan}} - {{matpel.nama}}</option>
+              <option value="{{matpel.singkatan}}">{{matpel.singkatan}} - {{matpel.nama}}</option>
             {%endfor%}
           </select>
-          <div class='row'>
+          <!-- <div class='row'>
             <div class="col">
               <label for="matpel_nama" class="col-4 col-form-label fw-bold">Nama Matpel</label>
               <input type="text" class="col-10 form-control" id='matpel_nama'>
@@ -39,7 +39,7 @@
                 <button type='button' class="btn btn-primary" onclick="newMatpel()">Tambah Mata Pelajaran</button>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="mb-2">
           <label for="name" class="col-2 col-form-label fw-bold">Nama Pengajar</label>

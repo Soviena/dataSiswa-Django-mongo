@@ -20,10 +20,10 @@
           <select required name="matpel" class="col-10 form-control" id="matpelPilih">
             <option disabled value="None">Kosong</option>
             {%for matpel in allMatpel%}
-              <option {% if data.id_pelajaran.id == matpel.id_pelajaran.id %} selected {% endif %} value="{{matpel.singkatan}}-{{matpel.nama}}">{{matpel.singkatan}} - {{matpel.nama}}</option>
+              <option {% if data.id_pelajaran.id == matpel.id_pelajaran.id %} selected {% endif %} value="{{matpel.singkatan}}">{{matpel.singkatan}} - {{matpel.nama}}</option>
             {%endfor%}
           </select>
-          <div class='row'>
+          <!-- <div class='row'>
             <div class="col">
               <label for="matpel_nama" class="col-4 col-form-label fw-bold">Nama Matpel</label>
               <input type="text" class="col-10 form-control" id='matpel_nama'>
@@ -40,7 +40,7 @@
                 <button type='button' class="btn btn-primary" onclick="newMatpel()">Tambah Mata Pelajaran</button>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>      
         <div class="mb-2">
           <label for="name" class="col-2 col-form-label fw-bold">Nama Pengajar</label>

@@ -64,14 +64,14 @@ def editAbsensi(request,idAbsensi):
     return render(request, 'absensi/editAbsensi.html',{'data': dataAbsen,'allKelas':allKelas,'userLogin':current_user,'allMatpel':allMatpel})
 
 def createAbsensi(request):
-    try:
-        matpel = Pelajaran.objects.get(singkatan=request.POST['matpel'])
-    except:
-        matpel = Pelajaran(
-            nama=request.POST['matpel'].split('-')[1],
-            singkatan=request.POST['matpel'].split('-')[0]
-        )
-        matpel.save()
+    # try:
+    matpel = Pelajaran.objects.get(singkatan=request.POST['matpel'])
+    # except:
+    #     matpel = Pelajaran(
+    #         nama=request.POST['matpel'].split('-')[1],
+    #         singkatan=request.POST['matpel'].split('-')[0]
+    #     )
+    #     matpel.save()
     if request.FILES.get('picture'):
         picName = picHandler(request)
     else:
@@ -109,14 +109,14 @@ def updateAbsensi(request):
         to_attr='siswa_absensi_list'
     )
     dataAbsen = Absensi.objects.prefetch_related(absensi_siswa_prefetch).get(id=request.POST['id'])
-    try:
-        matpel = Pelajaran.objects.get(singkatan=request.POST['matpel'])
-    except:
-        matpel = Pelajaran(
-            nama=request.POST['matpel'].split('-')[1],
-            singkatan=request.POST['matpel'].split('-')[0]
-        )
-        matpel.save()
+    # try:
+    matpel = Pelajaran.objects.get(singkatan=request.POST['matpel'])
+    # except:
+    #     matpel = Pelajaran(
+    #         nama=request.POST['matpel'].split('-')[1],
+    #         singkatan=request.POST['matpel'].split('-')[0]
+    #     )
+    #     matpel.save()
     if dataAbsen.id_pelajaran.id != matpel.id:
         dataAbsen.id_pelajaran = matpel
     if request.FILES.get('picture'):

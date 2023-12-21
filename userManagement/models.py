@@ -68,6 +68,7 @@ class Absensi(models.Model):
 class Siswa(models.Model):
     user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
     id_kelas = models.ForeignKey(Kelas, on_delete=models.CASCADE)
+    komponen_penilaian = models.ManyToManyField('KomponenPenilaian', through='Nilai', null=True)
     nis = models.CharField(max_length=20)
     nisn = models.CharField(max_length=20)
     angkatan = models.IntegerField()
@@ -83,3 +84,14 @@ class AbsensiSiswa(models.Model):
 
     def __str__(self):
         return f"AbsensiSiswa - Absensi: {self.id_absensi}, Siswa: {self.id_siswa}"
+
+class KomponenPenilaian(models.Model):
+    pelajaran = models.ForeignKey(Pelajaran, on_delete=models.CASCADE)
+    nama = models.CharField(max_length=255)
+    tahun = models.IntegerField()
+    bobot = models.DecimalField(max_digits=5, decimal_places=2)  
+
+class Nilai(models.Model):
+    siswa = models.ForeignKey(Siswa, on_delete=models.CASCADE)
+    komponen_penilaian = models.ForeignKey(KomponenPenilaian, on_delete=models.CASCADE)
+    nilai = models.DecimalField(max_digits=5, decimal_places=2)

@@ -25,13 +25,13 @@
           {% if request.session.role == "ADMIN" %}
             <a
               href="{% url 'userManagementIndex' %}"
-              class="list-group-item list-group-item-action py-2 ripple {% if request.path == '/userManagement/' %} active {% endif %}"
+              class="list-group-item list-group-item-action py-2 ripple {% if request.path == '/userManagement' %} active {% endif %}"
               aria-current="true"
             >
               <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Manage Users</span>
             </a>
 
-            <a href="{% url 'userFeedback' %}" class="list-group-item list-group-item-action py-2 ripple {% if request.path == '/userManagement/users/feedback/' %} active {% endif %}">
+            <a href="{% url 'userFeedback' %}" class="list-group-item list-group-item-action py-2 ripple {% if request.path == '/userManagement/users/feedback' %} active {% endif %}">
               <i class="fas fa-chart-area fa-fw me-3"></i><span>User Feedback</span>
             </a>
 
@@ -42,8 +42,13 @@
           </a>
           {% endif %}
           {% if request.session.role == "ADMIN" or request.session.role == "GURU" %}
-          <a href="{% url 'absensiIndex' %}" class="list-group-item list-group-item-action py-2 ripple">
+          <a href="{% url 'absensiIndex' %}" class="list-group-item list-group-item-action py-2 ripple {% if request.path == '/absensi' %} active {% endif %}">
             <i class="fas fa-calendar fa-fw me-3"></i><span>Absensi</span>
+          </a>
+          {% endif %}          
+          {% if request.session.role == "ADMIN" or request.session.role == "GURU" %}
+          <a href="{% url 'penilaianIndex' %}" class="list-group-item list-group-item-action py-2 ripple {% if request.path == '/penilaian' %} active {% endif %}">
+            <i class="fas fa-list-ol fa-fw me-3"></i><span>Penilaian</span>
           </a>
           {% endif %}          
           <!-- <a href="#" class="list-group-item list-group-item-action py-2 ripple">

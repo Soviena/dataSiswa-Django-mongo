@@ -1,0 +1,136 @@
+{% load static %}
+{% load filters_ %}
+{% include 'object/header.html' %}
+  <!--Main layout-->
+  <main style="margin-top: 10vh;" class="mx-3">
+    <div class="row">
+      <div class="col-10">
+        <h2 class="my-2">PENILAIAN</h2>
+      </div>
+      <div class="col-2">
+        <button class=" my-2 mb-5 btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#addMatpel">Tambah Mata pelajaran</button>
+      </div>
+    </div>
+      <div class="accordion" id="accordionMatpel">
+        {% for matpel in allMatpel %}
+
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{matpel.singkatan}}" aria-expanded="false" aria-controls="collapseOne">
+              {{matpel.singkatan}} - {{matpel.nama}}
+            </button>
+          </h2>
+          <div id="{{matpel.singkatan}}" class="accordion-collapse collapse" data-bs-parent="#accordionMatpel">
+            <div class="accordion-body">
+              <div class="row">
+                <div class="mb-2">
+                  <label class="col-6 col-form-label fw-bold">Tahun</label>
+                  <select name="tahunKomponen" class="form-select" id="komponen-{{matpel.singkatan}}" onchange="unhide(this.value, '{{matpel.singkatan}}')">
+                    <option disabled selected>Pilih Tahun</option>
+                    {% for tahun in allTahun %}
+                      <option value="{{ tahun.tahun }}">{{ tahun.tahun }}</option>                      
+                    {% endfor %}
+                  </select>
+                </div>
+              </div> 
+              <div class="row">
+                <h3 class="my-3">Komponen Penilaian</h3>
+              </div>
+              {% for komponen in matpel.komponenpenilaian_set.all %}
+              <div class="{{komponen.tahun}}" style="display: none;">
+                <div class="row">
+                  <label class="col-2 mx-5 col-form-label fw-bold">Nama Komponen</label>
+                  <label class="col-2 mx-5 col-form-label fw-bold">Bobot %</label>
+                  <label class="col-2 mx-5 col-form-label fw-bold">Hapus</label>        
+                  <label class="col-2 mx-5 col-form-label fw-bold">Nilai</label>                   
+                </div>
+                <div class="row">
+                  <input type="text" class="col-2 mx-5" disabled name="name" value="{{komponen.nama}}">
+                  <input type="text" class="col-2 mx-5" disabled name="bobot" value="{{komponen.bobot}}">
+                  <a href="{% url 'deleteKomponen' komponen.id %}" class="btn btn-danger col-2 mx-5">Hapus</a>
+                  <a href="{% url 'nilaiSiswa' komponen.id %}" class="btn btn-primary col-2 mx-5">Nilai</a>
+                </div>
+              </div>
+              {% endfor %}
+
+              <div class="row">
+                <h4 class="my-3 mt-5">Tambah Komponen</h4>
+              </div>
+
+              <div class="row">
+                <label class="col-2 mx-5 col-form-label fw-bold">Tahun</label>
+                <label class="col-2 mx-5 col-form-label fw-bold">Nama Komponen</label>
+                <label class="col-2 mx-5 col-form-label fw-bold">Bobot %</label>
+                <label class="col-2 mx-5 col-form-label fw-bold">Tambah</label>                   
+              </div>
+              <div class="row">
+                <form action="{% url 'addKomponen' %}" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="pelajaran" value="{{matpel.singkatan}}">
+                  <input required type="number" class="col-2 mx-5" name="tahun">
+                  <input required type="text" class="col-2 mx-5" name="name">
+                  <input required type="number" class="col-2 mx-5" name="bobot">
+                  <input type="submit" class="btn btn-primary col-2 mx-5" value="Tambah">
+                </form>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        {% endfor %}
+      </div>
+    </div>
+    <div class="modal fade" id="addMatpel" tabindex="-1" >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form action="{% url 'addMatpel' %}" method="post">
+
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Tambah Mata Pelajaran</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              {% csrf_token %}
+              <div class="mb-2">
+                <label class="col-6 col-form-label fw-bold">Nama Mata Pelajaran</label>
+                <input type="text" class="col-10 form-control" required name="name">
+              </div>
+              <div class="mb-2">
+                <label class="col-2 col-form-label fw-bold">Singkatan</label>
+                <input type="text" class="col-10 form-control" required name="singkatan">
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script>
+    var beforeContainerYear = {}
+    function unhide(className,containerName) {
+      let container = document.getElementById(containerName);
+      let elements = "";
+      try {
+        elements = container.getElementsByClassName(beforeContainerYear[containerName].year);        
+      } catch (error) {
+        elements = "";
+      }
+      // Hide each element
+      for (let i = 0; i < elements.length; i++) {
+          elements[i].style.display = "none";
+      }      
+      elements = container.getElementsByClassName(className);
+      // Unhide
+      for (let i = 0; i < elements.length; i++) {
+          elements[i].style.display = "";
+      }      
+      beforeContainerYear[containerName] = {year : className};
+    }
+  </script>
+  <!--Main layout-->
+{% include 'object/footer.html' %}

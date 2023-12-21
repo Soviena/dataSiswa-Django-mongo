@@ -37,17 +37,27 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost","django.belajarpro.online","127.0.0.1","0.0.0.0"]
+CORS_ALLOWED_ORIGINS = [
+    "https://django.belajarpro.online",
+    # Add other allowed origins as needed
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://django.belajarpro.online",
+]
 
 SECURE_SSL_REDIRECT=False
-SESSION_COOKIE_SECURE=True
-CSRF_COOKIE_SECURE=True
+SESSION_COOKIE_SECURE=False
+CSRF_COOKIE_SECURE=False
 # Application definition
 
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
+    'corsheaders',
     'user',
     'userManagement',
     'absensi',
+    'penilaian',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -60,6 +70,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

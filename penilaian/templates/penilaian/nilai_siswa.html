@@ -1,0 +1,93 @@
+{% load static %}
+{% load filters_ %}
+{% include 'object/header.html' %}
+  <!--Main layout-->
+  <main style="margin-top: 10vh;" class="mx-3">
+    <div class="container-fluid p-5 shadow">
+
+      <div class="row">
+        <div class="col-10">
+          <h2 class="my-2">PENILAIAN</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="mb-2">
+          <label for="kelas" class="col-2 col-form-label fw-bold">Kelas</label>
+          <select type="text" class="col-10 form-control" value="{{ absensi.id_kelas }}" name="kelas" onchange=changeKelas(this.value)>
+            <option disabled selected value="-">Pilih Kelas</option>
+            {% for kelas in allKelas %}
+            <option value="{{kelas.unique_id}}">{{kelas.unique_id}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <form action="{% url 'addNilai' %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="idKomponen" value="{{idKomponen}}">
+          <table id="tableSiswa" class="table table">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>NIS</th>
+                <th>Nama</th>
+                <th>Kelas</th>
+                <th>Nilai</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for siswa in allSiswa %}
+                <tr> 
+                  <td>{{ forloop.counter }}</td>
+                  <td>
+                      {{ siswa.nis }}
+                  </td>
+                  <td>
+                    {{ siswa.user_profile.nama_Lengkap }}
+                  </td>
+                  <td>
+                    {{ siswa.id_kelas }}
+                  </td>
+                  <td>
+                    <div class="form-group">
+                      <div class="form-check form-check-inline">
+                        <input class="form-control" type="number" name="nilai-{{ siswa.id }}" id="siswa-{{siswa.id}}" value=""> 
+                        {% for nilai in siswa.nilai_set.all %}
+                          {% if nilai.komponen_penilaian.id == idKomponen %}
+                            <script>
+                              document.getElementById('siswa-{{siswa.id}}').value = "{{nilai.nilai}}"
+                            </script>
+                          {% endif %}                          
+                        {% endfor %}
+                      </div>
+                    </div>                  
+                  </td>
+                </tr>                            
+              {% endfor %}
+            </tbody>
+          </table>
+          <div class="row">
+            <div class="col">
+              <button type="submit" class="btn btn-primary float-end">SUBMIT NILAI</button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+  </main>
+  <script>
+    var table = "";
+    $(document).ready(function () {
+      table = $('#tableSiswa').DataTable();
+    });
+    function changeKelas(kelas) {
+      kelas = kelas.replace('-','')
+      table.columns(3).search(kelas).draw();
+    }
+
+  </script>
+  <!--Main layout-->
+{% include 'object/footer.html' %}
